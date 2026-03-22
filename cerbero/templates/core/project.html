@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerbero · {{ project.slug }}</title>
+    <style>
+        /* Copia los estilos de la versión cyberpunk aquí */
+        /* Por ahora usamos un estilo simple */
+        body {
+            background: #0a0a0f;
+            color: #fff;
+            font-family: monospace;
+            padding: 40px;
+        }
+        .terminal {
+            background: #12121a;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid #00f3ff;
+        }
+        .file-list {
+            margin: 20px 0;
+        }
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0,243,255,0.2);
+            display: flex;
+            justify-content: space-between;
+        }
+        .link-box {
+            background: #1e1e2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .btn {
+            background: linear-gradient(135deg, #00f3ff, #b026ff);
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        pre {
+            background: #0a0a0f;
+            padding: 20px;
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <h1>🐕 CERBERO</h1>
+        <h2>Proyecto: {{ project.slug }}</h2>
+        
+        <div class="mode-buttons">
+            <a href="?mode=humano" class="btn">👁️ Modo Humano</a>
+            <a href="?mode=ia" class="btn">🤖 Modo IA</a>
+            <a href="?mode=text" class="btn">📄 Texto Plano</a>
+        </div>
+        
+        <div class="link-box">
+            🔗 Enlace: <code>{{ request.build_absolute_uri }}</code>
+            <button onclick="copyLink()" class="btn">📋 Copiar</button>
+        </div>
+        
+        <div class="file-list">
+            <h3>📁 Archivos ({{ files|length }})</h3>
+            {% for file in files %}
+            <div class="file-item">
+                <span>📄 {{ file.original_name }}</span>
+                <span>{{ file.size|filesizeformat }}</span>
+                <a href="{{ file.file.url }}" target="_blank" class="btn" style="padding: 4px 12px;">Descargar</a>
+            </div>
+            {% empty %}
+            <p>No hay archivos subidos aún.</p>
+            {% endfor %}
+        </div>
+        
+        <div class="link-box">
+            <h4>📊 Estadísticas</h4>
+            <p>Vistas: {{ project.views }}</p>
+            <p>Creado: {{ project.created_at|date:"d/m/Y H:i" }}</p>
+            <p>Tamaño total: {{ total_size|filesizeformat }}</p>
+        </div>
+    </div>
+    
+    <script>
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('✅ Enlace copiado al portapapeles');
+        }
+    </script>
+</body>
+</html>

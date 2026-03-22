@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Cerbero · el guardián · El puente entre tu código y las IAs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-purple: #b026ff;
+            --neon-green: #00ff9d;
+            --neon-yellow: #ffff00;
+            --dark-1: #050508;
+            --dark-2: #0a0a0f;
+            --dark-3: #12121a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --gradient-cyber: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-1);
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body.matrix-mode {
+            --neon-blue: #00ff00;
+            --neon-pink: #00ff00;
+            --neon-purple: #00ff41;
+            --gradient-cyber: linear-gradient(135deg, #00ff00, #00ff41, #008f11);
+        }
+
+        body.matrix-mode .grid-overlay {
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+        }
+
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s, background 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor.hover {
+            transform: scale(2);
+            background: var(--neon-blue);
+            border-color: transparent;
+        }
+
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .bg-cyber {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: var(--dark-1);
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float 10s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        body.matrix-mode #matrix-canvas {
+            opacity: 0.3;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 5, 8, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .header.scrolled {
+            padding: 15px 50px;
+            background: rgba(5, 5, 8, 0.95);
+        }
+
+        .logo-cyber {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .logo-glitch {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(-2px, 2px); }
+            94% { transform: translate(2px, -2px); }
+            96% { transform: translate(-2px, -2px); }
+        }
+
+        .logo-tag {
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid var(--neon-green);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .nav-cyber {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-cyber a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+            padding: 5px 0;
+        }
+
+        .nav-cyber a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            transition: width 0.3s;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .nav-cyber a:hover {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .nav-cyber a:hover::before {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-cyber {
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-cyber:hover::before {
+            left: 100%;
+        }
+
+        .btn-cyber-outline {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        .btn-cyber-outline:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-cyber-fill {
+            background: var(--gradient-cyber);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(176, 38, 255, 0.3);
+        }
+
+        .btn-cyber-fill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px rgba(176, 38, 255, 0.5);
+        }
+
+        .matrix-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--dark-3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 0 4px;
+        }
+
+        .matrix-toggle.active {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .matrix-toggle-knob {
+            width: 18px;
+            height: 18px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            transition: all 0.3s;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .matrix-toggle.active .matrix-toggle-knob {
+            transform: translateX(24px);
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .hero-cyber {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 150px 50px 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content-cyber {
+            max-width: 1400px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-text-cyber {
+            z-index: 2;
+        }
+
+        .cyber-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--neon-green);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--neon-green);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 30px;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 157, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 157, 0.6); }
+        }
+
+        .cyber-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero-title-cyber {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .hero-title-cyber .line-1 {
+            display: block;
+            background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title-cyber .line-2 {
+            display: block;
+            font-size: 3rem;
+            color: var(--neon-purple);
+            text-shadow: 0 0 30px rgba(176, 38, 255, 0.5);
+            margin-top: 10px;
+        }
+
+        .hero-subtitle-cyber {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 40px;
+            max-width: 500px;
+            line-height: 1.8;
+        }
+
+        .hero-cta-cyber {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .btn-cyber-large {
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+        }
+
+        .hero-stats-cyber {
+            display: flex;
+            gap: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .stat-cyber {
+            position: relative;
+        }
+
+        .stat-cyber::after {
+            content: '';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 40px;
+            background: rgba(0, 243, 255, 0.2);
+        }
+
+        .stat-cyber:last-child::after {
+            display: none;
+        }
+
+        .stat-value-cyber {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+        }
+
+        .stat-label-cyber {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+        }
+
+        .hologram-terminal {
+            position: relative;
+            background: var(--dark-2);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1), inset 0 0 50px rgba(0, 243, 255, 0.02);
+            transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+            transition: all 0.5s;
+            animation: hologramFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes hologramFloat {
+            0%, 100% { transform: perspective(1000px) rotateY(-5deg) rotateX(5deg) translateY(0); }
+            50% { transform: perspective(1000px) rotateY(-5deg) rotateX(5deg) translateY(-10px); }
+        }
+
+        .hologram-terminal:hover {
+            transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-10px);
+            box-shadow: 0 0 80px rgba(0, 243, 255, 0.2), inset 0 0 50px rgba(0, 243, 255, 0.05);
+        }
+
+        .terminal-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 243, 255, 0.02) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            border-radius: 20px;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+
+        .terminal-header-cyber {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            align-items: center;
+        }
+
+        .terminal-dot-cyber {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .terminal-dot-cyber.red { background: #ff5f56; color: #ff5f56; }
+        .terminal-dot-cyber.yellow { background: #ffbd2e; color: #ffbd2e; }
+        .terminal-dot-cyber.green { background: #27c93f; color: #27c93f; }
+
+        .terminal-title-cyber {
+            margin-left: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .terminal-body-cyber {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .cmd-prompt {
+            color: var(--neon-green);
+            margin-bottom: 15px;
+        }
+
+        .cmd-input {
+            color: #fff;
+        }
+
+        .cmd-input::after {
+            content: '█';
+            animation: cursor 1s infinite;
+            color: var(--neon-blue);
+        }
+
+        @keyframes cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .file-tree {
+            margin: 20px 0;
+            padding-left: 20px;
+            border-left: 2px solid rgba(0, 243, 255, 0.2);
+        }
+
+        .tree-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            color: var(--neon-blue);
+        }
+
+        .tree-item .file-name { color: #fff; }
+        .tree-item .file-size { color: rgba(255, 255, 255, 0.4); }
+
+        .progress-cyber {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 243, 255, 0.1);
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill-cyber {
+            height: 100%;
+            background: var(--gradient-cyber);
+            border-radius: 2px;
+            width: 0%;
+            animation: loadFile 3s ease-out forwards;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        @keyframes loadFile {
+            to { width: 100%; }
+        }
+
+        .success-cyber {
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            animation: successPulse 2s infinite;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .link-generated {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .link-url-cyber {
+            color: var(--neon-pink);
+            font-size: 1rem;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+
+        .marquee-section {
+            background: var(--dark-2);
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            padding: 20px 0;
+            overflow: hidden;
+        }
+
+        .marquee-track {
+            display: flex;
+            animation: marquee 20s linear infinite;
+            width: fit-content;
+        }
+
+        .marquee-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0 40px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+        }
+
+        .marquee-item span {
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .features-cyber {
+            padding: 150px 50px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .section-header-cyber {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .section-tag-cyber {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--neon-purple);
+            border: 1px solid var(--neon-purple);
+            padding: 8px 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-title-cyber {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 50%, var(--neon-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-desc-cyber {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid-cyber {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card-cyber {
+            background: var(--dark-2);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .feature-card-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-cyber);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .feature-card-cyber:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(0, 243, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 243, 255, 0.1);
+        }
+
+        .feature-card-cyber:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon-cyber {
+            width: 70px;
+            height: 70px;
+            background: var(--dark-3);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .feature-card-cyber:hover .feature-icon-cyber {
+            background: var(--gradient-cyber);
+            border-color: transparent;
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+        }
+
+        .feature-title-cyber {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .feature-ext-cyber {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+        }
+
+        .feature-desc-cyber {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .demo-cyber {
+            padding: 150px 50px;
+            background: var(--dark-2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-cyber::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.05) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
+
+        .demo-container-cyber {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .demo-grid-cyber {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .demo-text-cyber h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        .demo-text-cyber p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .steps-cyber {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .step-cyber {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            padding: 20px;
+            background: rgba(0, 243, 255, 0.03);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .step-cyber:hover {
+            background: rgba(0, 243, 255, 0.08);
+            border-color: rgba(0, 243, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .step-num-cyber {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-cyber);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .step-content-cyber h4 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .step-content-cyber p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .demo-visual-cyber {
+            position: relative;
+        }
+
+        .upload-zone-cyber {
+            background: var(--dark-3);
+            border: 2px dashed rgba(0, 243, 255, 0.3);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .upload-zone-cyber::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(0, 243, 255, 0.1), transparent 30%);
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .upload-zone-cyber:hover {
+            border-color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.05);
+            transform: scale(1.02);
+        }
+
+        .upload-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-icon-cyber {
+            width: 100px;
+            height: 100px;
+            background: var(--gradient-cyber);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 30px;
+            box-shadow: 0 20px 60px rgba(0, 243, 255, 0.3);
+            animation: float-icon 3s ease-in-out infinite;
+        }
+
+        @keyframes float-icon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .quote-wow {
+            background: white;
+            border-radius: 24px;
+            padding: 35px 30px;
+            margin: 50px;
+            border: 1px solid #e2e8f0;
+            border-left: 6px solid #6c5ce7;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            background: var(--dark-2);
+            border-color: rgba(0, 243, 255, 0.2);
+        }
+
+        .quote-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .quote-icon {
+            font-size: 2rem;
+        }
+
+        .quote-author {
+            color: var(--neon-blue);
+            font-weight: 600;
+        }
+
+        .quote-text {
+            font-size: 1.2rem;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .quote-highlight {
+            color: var(--neon-purple);
+            font-weight: 600;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 50px;
+        }
+
+        .badge {
+            background: var(--dark-2);
+            padding: 10px 24px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: #fff;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge span {
+            color: var(--neon-blue);
+            font-size: 1.1rem;
+        }
+
+        .cta-final {
+            padding: 150px 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-final::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-cyber);
+            opacity: 0.05;
+        }
+
+        .cta-box {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--dark-2);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 30px;
+            padding: 80px 60px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 100px rgba(0, 243, 255, 0.1);
+        }
+
+        .cta-box h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cta-box p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .cta-buttons-final {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-cyber {
+            padding: 60px 50px 30px;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            background: var(--dark-2);
+        }
+
+        .footer-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 20px;
+            line-height: 1.8;
+        }
+
+        .footer-links h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #fff;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a::before {
+            content: '›';
+            color: var(--neon-blue);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--neon-blue);
+            padding-left: 10px;
+        }
+
+        .footer-links a:hover::before {
+            opacity: 1;
+        }
+
+        .footer-bottom-cyber {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9rem;
+        }
+
+        .social-cyber {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-btn-cyber {
+            width: 45px;
+            height: 45px;
+            background: var(--dark-3);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .social-btn-cyber:hover {
+            background: var(--neon-blue);
+            color: var(--dark-1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.3);
+        }
+
+        .konami-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .konami-overlay.active {
+            display: flex;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .konami-text {
+            font-size: 3rem;
+            color: var(--neon-green);
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px var(--neon-green);
+            animation: glitch-text 0.3s infinite;
+        }
+
+        @keyframes glitch-text {
+            0%, 100% { transform: translate(0); }
+            25% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, -2px); }
+            75% { transform: translate(-2px, -2px); }
+        }
+
+        .konami-dog {
+            font-size: 10rem;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .konami-close {
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .konami-close:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-green);
+        }
+
+        @media (max-width: 1200px) {
+            .hero-content-cyber {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-stats-cyber {
+                justify-content: center;
+            }
+            .hologram-terminal {
+                order: -1;
+                transform: none;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .features-grid-cyber {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .demo-grid-cyber {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor, .cursor-dot { display: none; }
+            .header { padding: 15px 20px; }
+            .nav-cyber { display: none; }
+            .hero-cyber { padding: 120px 20px 80px; }
+            .hero-title-cyber { font-size: 3rem; }
+            .hero-title-cyber .line-2 { font-size: 2rem; }
+            .features-grid-cyber { grid-template-columns: 1fr; }
+            .section-title-cyber { font-size: 2.5rem; }
+            .cta-box { padding: 40px 30px; }
+            .cta-box h2 { font-size: 2rem; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--dark-1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-blue);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- EASTER EGG OVERLAY -->
+    <div class="konami-overlay" id="konamiOverlay">
+        <div class="konami-text">🐕 CERBERO UNLEASHED 🐕</div>
+        <div class="konami-dog">🐕</div>
+        <div class="konami-text" style="font-size: 1.5rem; margin-top: 20px;">MODO DIOS ACTIVADO<br><span style="font-size: 1rem;">Todos los archivos son ilimitados ahora</span></div>
+        <button class="konami-close" onclick="closeKonami()">[ CERRAR ]</button>
+    </div>
+
+    <!-- CURSOR -->
+    <div class="cursor"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- BACKGROUND -->
+    <div class="bg-cyber"></div>
+    <div class="grid-overlay"></div>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="particles" id="particles"></div>
+
+    <!-- HEADER -->
+    <header class="header" id="header">
+        <a href="#" class="logo-cyber">
+            <div class="logo-glitch">🐕 CERBERO</div>
+            <span class="logo-tag">v3.0</span>
+        </a>
+        <nav class="nav-cyber">
+            <a href="#features">Features</a>
+            <a href="#demo">Cómo funciona</a>
+            <a href="#pricing">Pricing</a>
+        </nav>
+        <div class="header-actions">
+            <div class="matrix-toggle" id="matrixToggle" title="Activar Modo Matrix">
+                <div class="matrix-toggle-knob">💊</div>
+            </div>
+            <a href="#" class="btn-cyber btn-cyber-outline">Login</a>
+            <a href="#" class="btn-cyber btn-cyber-fill">Sign up</a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero-cyber">
+        <div class="hero-content-cyber">
+            <div class="hero-text-cyber">
+                <div class="cyber-badge">SISTEMA OPERATIVO: ONLINE</div>
+                <h1 class="hero-title-cyber"><span class="line-1">El guardián</span><span class="line-2">del contexto digital</span></h1>
+                <p class="hero-subtitle-cyber">Rompe la barrera entre tu código y la IA. Sube tu proyecto, genera un enlace cifrado, y deja que cualquier inteligencia artificial acceda a tu contexto completo.</p>
+                <div class="hero-cta-cyber">
+                    <button class="btn-cyber btn-cyber-fill btn-cyber-large" id="openUploadBtn">🚀 Inicializar sistema</button>
+                    <button class="btn-cyber btn-cyber-outline btn-cyber-large">📖 Ver documentación</button>
+                </div>
+                <div class="hero-stats-cyber">
+                    <div class="stat-cyber"><div class="stat-value-cyber">∞</div><div class="stat-label-cyber">Proyectos ilimitados</div></div>
+                    <div class="stat-cyber"><div class="stat-value-cyber">0</div><div class="stat-label-cyber">Costo inicial</div></div>
+                    <div class="stat-cyber"><div class="stat-value-cyber">100MB</div><div class="stat-label-cyber">Máx por archivo</div></div>
+                </div>
+            </div>
+
+            <div class="hologram-terminal">
+                <div class="terminal-scanline"></div>
+                <div class="terminal-header-cyber">
+                    <div class="terminal-dot-cyber red"></div>
+                    <div class="terminal-dot-cyber yellow"></div>
+                    <div class="terminal-dot-cyber green"></div>
+                    <span class="terminal-title-cyber">cerbero@guardian:~$ iniciando_secuencia</span>
+                </div>
+                <div class="terminal-body-cyber">
+                    <div class="cmd-prompt">$ <span class="cmd-input" id="terminalInput">cerbero upload --recursive</span></div>
+                    <div class="file-tree" id="fileTreePreview">
+                        <div class="tree-item"><span class="file-name">📁 src/</span><span class="file-size">[DIRECTORIO]</span></div>
+                        <div class="tree-item"><span class="file-name">  ├─ app.js</span><span class="file-size">45.1 KB</span></div>
+                        <div class="tree-item"><span class="file-name">  ├─ styles.css</span><span class="file-size">8.2 KB</span></div>
+                        <div class="tree-item"><span class="file-name">  └─ index.html</span><span class="file-size">12.4 KB</span></div>
+                    </div>
+                    <div class="progress-cyber"><div class="progress-fill-cyber" id="progressFill"></div></div>
+                    <div class="success-cyber" id="successMessage" style="display: none;"><span>✓</span> ENCRIPTACIÓN COMPLETADA — ENLACE GENERADO</div>
+                    <div class="link-generated" id="linkGenerated" style="display: none;">
+                        <span class="link-url-cyber" id="generatedLink">🔒 https://cerb.ro/p/</span>
+                        <span style="color: var(--neon-blue); cursor: pointer;" onclick="copyLink()">[COPIAR]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-section"><div class="marquee-track"><div class="marquee-item"><span>⚡</span> 100% GRATIS</div><div class="marquee-item"><span>💳</span> SIN TARJETAS</div><div class="marquee-item"><span>🔒</span> ENCRIPTADO</div><div class="marquee-item"><span>🌐</span> ENLACE ÚNICO</div><div class="marquee-item"><span>🤖</span> IA READY</div><div class="marquee-item"><span>⚡</span> 100% GRATIS</div><div class="marquee-item"><span>💳</span> SIN TARJETAS</div><div class="marquee-item"><span>🔒</span> ENCRIPTADO</div><div class="marquee-item"><span>🌐</span> ENLACE ÚNICO</div><div class="marquee-item"><span>🤖</span> IA READY</div></div></div>
+
+    <!-- FEATURES -->
+    <section class="features-cyber" id="features">
+        <div class="section-header-cyber"><span class="section-tag-cyber">:: SOPORTE_TECNOLÓGICO ::</span><h2 class="section-title-cyber">Formatos compatibles</h2><p class="section-desc-cyber">Si tu IA lo necesita, Cerbero lo transporta. Cualquier formato, cualquier tamaño, cualquier contexto.</p></div>
+        <div class="features-grid-cyber">
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">💻</div><h3 class="feature-title-cyber">Código fuente</h3><div class="feature-ext-cyber">.js .ts .py .go .rs .java</div><p class="feature-desc-cyber">Syntax highlighting y análisis estructural automático</p></div>
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">🎨</div><h3 class="feature-title-cyber">Diseño UI/UX</h3><div class="feature-ext-cyber">.fig .sketch .xd .svg</div><p class="feature-desc-cyber">Extracción de componentes y guías de estilo</p></div>
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">🗄️</div><h3 class="feature-title-cyber">Base de datos</h3><div class="feature-ext-cyber">.sql .prisma .mongo .graphql</div><p class="feature-desc-cyber">Esquemas, relaciones y queries optimizadas</p></div>
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">🐛</div><h3 class="feature-title-cyber">Debugging</h3><div class="feature-ext-cyber">.log .stack .crash .trace</div><p class="feature-desc-cyber">Análisis de errores y sugerencias de fix</p></div>
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">📦</div><h3 class="feature-title-cyber">Proyectos ZIP</h3><div class="feature-ext-cyber">.zip .tar .rar .7z</div><p class="feature-desc-cyber">Compresión inteligente hasta 100MB</p></div>
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">⚙️</div><h3 class="feature-title-cyber">Configuración</h3><div class="feature-ext-cyber">.json .yml .env .toml</div><p class="feature-desc-cyber">Variables de entorno y secrets management</p></div>
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">📝</div><h3 class="feature-title-cyber">Documentación</h3><div class="feature-ext-cyber">.md .rst .txt .pdf</div><p class="feature-desc-cyber">Specs, READMEs y documentación técnica</p></div>
+            <div class="feature-card-cyber"><div class="feature-icon-cyber">🔐</div><h3 class="feature-title-cyber">Modo Stealth</h3><div class="feature-ext-cyber">AUTO_DESTRUCT</div><p class="feature-desc-cyber">Enlaces de un solo uso con autodestrucción</p></div>
+        </div>
+    </section>
+
+    <!-- DEMO SECTION CON SUBIDA REAL -->
+    <section class="demo-cyber" id="demo">
+        <div class="demo-container-cyber">
+            <div class="demo-grid-cyber">
+                <div class="demo-text-cyber">
+                    <span class="section-tag-cyber">:: PROTOCOLO ::</span>
+                    <h3>Sube. Comparte. Resuelve.<br>En ese orden.</h3>
+                    <p>Cerbero actúa como el puente cuántico entre tu entorno local y las IAs más potentes del planeta. Tu código nunca toca servidores permanentes: existe solo como contexto temporal.</p>
+                    <div class="steps-cyber">
+                        <div class="step-cyber"><div class="step-num-cyber">1</div><div class="step-content-cyber"><h4>Arrastra o selecciona</h4><p>Tus archivos, carpetas, o proyectos completos</p></div></div>
+                        <div class="step-cyber"><div class="step-num-cyber">2</div><div class="step-content-cyber"><h4>Encriptación automática</h4><p>Cerbero procesa y genera un hash único seguro</p></div></div>
+                        <div class="step-cyber"><div class="step-num-cyber">3</div><div class="step-content-cyber"><h4>Comparte con cualquier IA</h4><p>ChatGPT, Claude, Gemini, Copilot... todas entienden</p></div></div>
+                    </div>
+                </div>
+                <div class="demo-visual-cyber">
+                    <div class="upload-zone-cyber" id="uploadZone">
+                        <div class="upload-content">
+                            <div class="upload-icon-cyber">📁</div>
+                            <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 15px;">ZONA DE TRANSFERENCIA</h4>
+                            <p style="color: rgba(255,255,255,0.5); margin-bottom: 25px;">Arrastra archivos aquí o haz clic para explorar</p>
+                            <input type="file" id="fileInput" multiple style="display: none;">
+                            <div id="uploadStatus" style="margin-top: 15px; color: var(--neon-green);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUOTE -->
+    <div class="quote-wow" style="margin: 50px;">
+        <div class="quote-header"><span class="quote-icon">🐕></span><span class="quote-author">Cerbero, el guardián</span></div>
+        <div class="quote-text">"Las IAs no pueden acceder a tu PC por <span class="quote-highlight">políticas de privacidad</span>...<br>pero Cerbero <span class="quote-highlight">les pasa el mensaje</span>. Tú solo comparte el enlace único."</div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="badges"><span class="badge"><span>⚡</span> 100% GRATIS</span><span class="badge"><span>💳</span> SIN TARJETAS</span><span class="badge"><span>🚫</span> SIN LÍMITES TONTOS</span><span class="badge"><span>🔒</span> PRIVACIDAD CONTROLADA</span><span class="badge"><span>🌐</span> ENLACE ÚNICO</span></div>
+
+    <!-- CTA FINAL -->
+    <section class="cta-final">
+        <div class="cta-box"><h2>Listo para liberar<br>el potencial de tus IAs?</h2><p>Únete a la revolución. Sube tu primer proyecto gratis, sin tarjetas, sin compromisos.</p><div class="cta-buttons-final"><button class="btn-cyber btn-cyber-fill btn-cyber-large" id="ctaUploadBtn">🚀 Subir proyecto ahora</button><button class="btn-cyber btn-cyber-outline btn-cyber-large">📺 Ver demo</button></div></div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer-cyber"><div class="footer-grid"><div class="footer-brand"><div class="logo-glitch" style="font-size: 1.5rem;">🐕 CERBERO</div><p>El guardián del contexto digital. Rompiendo barreras entre tu código y las IAs desde 2026.</p></div><div class="footer-links"><h4>Producto</h4><ul><li><a href="#features">Features</a></li><li><a href="#pricing">Precios</a></li><li><a href="#">API</a></li></ul></div><div class="footer-links"><h4>Recursos</h4><ul><li><a href="#">Documentación</a></li><li><a href="#">Blog</a></li><li><a href="#">Soporte</a></li></ul></div><div class="footer-links"><h4>Legal</h4><ul><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li><li><a href="#">Seguridad</a></li></ul></div></div><div class="footer-bottom-cyber"><div class="footer-copyright">© 2026 Cerbero · Todos los derechos guardados</div><div class="social-cyber"><a href="#" class="social-btn-cyber">🐙</a><a href="#" class="social-btn-cyber">𝕏</a><a href="#" class="social-btn-cyber">💬</a></div></div></footer>
+
+    <script>
+        // ==================== MATRIX RAIN ====================
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        let matrixCtx = matrixCanvas.getContext('2d');
+        function initMatrix() {
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+            const fontSize = 14;
+            const columns = matrixCanvas.width / fontSize;
+            const drops = [];
+            for (let i = 0; i < columns; i++) drops[i] = Math.floor(Math.random() * -matrixCanvas.height);
+            function drawMatrix() {
+                matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+                matrixCtx.fillStyle = '#0f0';
+                matrixCtx.font = fontSize + 'px monospace';
+                for (let i = 0; i < drops.length; i++) {
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    const x = i * fontSize;
+                    const y = drops[i] * fontSize;
+                    matrixCtx.fillText(char, x, y);
+                    if (y > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }
+            setInterval(drawMatrix, 35);
+        }
+        initMatrix();
+        window.addEventListener('resize', initMatrix);
+
+        // ==================== PARTICLES ====================
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 100; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.animationDuration = 5 + Math.random() * 10 + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // ==================== CURSOR ====================
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        if (window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`;
+                cursorDot.style.transform = `translate(${e.clientX - 2}px, ${e.clientY - 2}px)`;
+            });
+            document.querySelectorAll('a, button, .feature-card-cyber, .step-cyber').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+        }
+
+        // ==================== MATRIX TOGGLE ====================
+        const matrixToggle = document.getElementById('matrixToggle');
+        matrixToggle.addEventListener('click', () => {
+            document.body.classList.toggle('matrix-mode');
+            matrixToggle.classList.toggle('active');
+            localStorage.setItem('cerbero-mode', document.body.classList.contains('matrix-mode') ? 'matrix' : 'cyber');
+        });
+        if (localStorage.getItem('cerbero-mode') === 'matrix') {
+            document.body.classList.add('matrix-mode');
+            matrixToggle.classList.add('active');
+        }
+
+        // ==================== HEADER SCROLL ====================
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ==================== KONAMI CODE ====================
+        let konamiBuffer = [];
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+        document.addEventListener('keydown', (e) => {
+            konamiBuffer.push(e.code);
+            if (konamiBuffer.length > konamiCode.length) konamiBuffer.shift();
+            if (konamiBuffer.join() === konamiCode.join()) {
+                document.getElementById('konamiOverlay').classList.add('active');
+                konamiBuffer = [];
+            }
+        });
+        window.closeKonami = function() { document.getElementById('konamiOverlay').classList.remove('active'); };
+
+        // ==================== SUBIDA DE ARCHIVOS REAL ====================
+        const fileInput = document.getElementById('fileInput');
+        const uploadZone = document.getElementById('uploadZone');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const terminalInput = document.getElementById('terminalInput');
+        const fileTreePreview = document.getElementById('fileTreePreview');
+        const progressFill = document.getElementById('progressFill');
+        const successMessage = document.getElementById('successMessage');
+        const linkGenerated = document.getElementById('linkGenerated');
+        const generatedLinkSpan = document.getElementById('generatedLink');
+
+        function triggerFileInput() {
+            fileInput.click();
+        }
+
+        uploadZone.addEventListener('click', triggerFileInput);
+        document.getElementById('openUploadBtn').addEventListener('click', triggerFileInput);
+        document.getElementById('ctaUploadBtn').addEventListener('click', triggerFileInput);
+
+        async function uploadFiles(files) {
+            if (!files.length) return;
+            
+            const formData = new FormData();
+            for (let file of files) {
+                formData.append('files', file);
+            }
+            
+            terminalInput.textContent = `cerbero upload --recursive --files=${files.length}`;
+            
+            progressFill.style.width = '0%';
+            progressFill.parentElement.style.display = 'block';
+            uploadStatus.textContent = '📤 Subiendo archivos...';
+            
+            try {
+                const response = await fetch('/p/api/upload/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    progressFill.style.width = '100%';
+                    uploadStatus.innerHTML = `✅ Subidos ${data.count} archivos correctamente`;
+                    successMessage.style.display = 'flex';
+                    
+                    const fullUrl = `${window.location.origin}${data.url}`;
+                    generatedLinkSpan.innerHTML = `🔒 ${fullUrl}`;
+                    linkGenerated.style.display = 'flex';
+                    
+                    // Actualizar preview de archivos
+                    let previewHtml = `<div class="tree-item"><span class="file-name">📁 proyecto/</span><span class="file-size">[${data.count} archivos]</span></div>`;
+                    data.files.forEach((file, idx) => {
+                        const prefix = idx === data.files.length - 1 ? '  └─' : '  ├─';
+                        previewHtml += `<div class="tree-item"><span class="file-name">${prefix} ${file.name}</span><span class="file-size">${(file.size / 1024).toFixed(1)} KB</span></div>`;
+                    });
+                    fileTreePreview.innerHTML = previewHtml;
+                    
+                    setTimeout(() => {
+                        window.location.href = data.url;
+                    }, 2000);
+                } else {
+                    uploadStatus.innerHTML = `❌ Error: ${data.error}`;
+                }
+            } catch (error) {
+                uploadStatus.innerHTML = `❌ Error de conexión: ${error.message}`;
+            }
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            uploadFiles(Array.from(e.target.files));
+            fileInput.value = '';
+        });
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = 'var(--neon-blue)';
+            uploadZone.style.background = 'rgba(0, 243, 255, 0.1)';
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+            uploadZone.style.background = 'var(--dark-3)';
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+            uploadZone.style.background = 'var(--dark-3)';
+            uploadFiles(Array.from(e.dataTransfer.files));
+        });
+
+        window.copyLink = function() {
+            const linkText = generatedLinkSpan.innerText.replace('🔒 ', '');
+            navigator.clipboard.writeText(linkText);
+            alert('🔗 Enlace copiado al portapapeles');
+        };
+    </script>
+</body>
+</html>

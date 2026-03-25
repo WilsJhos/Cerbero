@@ -1,9 +1,9 @@
 # core/views.py
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import JsonResponse
 from django.shortcuts import render
 from projects.models import Project
+
 
 def home(request):
     """Vista principal de la landing page"""
@@ -23,14 +23,4 @@ def health_check(request):
         'status': 'ok',
         'message': 'Cerbero API funcionando 🐕',
         'version': '1.0.0'
-    })
-
-def home(request):
-    """
-    Vista simple para la raíz
-    """
-    return JsonResponse({
-        'message': 'Bienvenido a Cerbero API',
-        'docs': '/api/',
-        'status': 'online'
     })

@@ -4,7 +4,11 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from .models import Project, ProjectFile
+
 
 def project_view(request, slug):
     """Vista pública del proyecto"""
@@ -45,16 +49,33 @@ def project_view(request, slug):
         'total_size': sum(f.size for f in files)
     })
 
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def upload_file(request):
     """Endpoint para subir archivos"""
     try:
         slug = request.POST.get('slug')
+        
+        # Verificar si hay usuario autenticado
+        user = None
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            from rest_framework_simplejwt.tokens import AccessToken
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            try:
+                token = auth_header.split(' ')[1]
+                access_token = AccessToken(token)
+                user_id = access_token['user_id']
+                user = User.objects.get(id=user_id)
+            except Exception as e:
+                pass
+        
         if slug:
             project = Project.objects.get(slug=slug)
         else:
-            project = Project.objects.create()
+            project = Project.objects.create(user=user)
         
         files = request.FILES.getlist('files')
         uploaded_files = []
@@ -84,13 +105,15 @@ def upload_file(request):
             'url': f'/p/{project.slug}/',
             'full_url': request.build_absolute_uri(f'/p/{project.slug}/'),
             'files': uploaded_files,
-            'count': len(uploaded_files)
+            'count': len(uploaded_files),
+            'user': user.username if user else None
         })
         
     except Project.DoesNotExist:
         return JsonResponse({'error': 'Proyecto no encontrado'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
 
 def get_project_info(request, slug):
     """Obtener información del proyecto en JSON"""
@@ -108,4 +131,22 @@ def get_project_info(request, slug):
             'type': f.file_type,
             'url': f.file.url
         } for f in files]
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_projects(request):
+    """Lista de proyectos del usuario autenticado"""
+    projects = Project.objects.filter(user=request.user).order_by('-created_at')
+    
+    return Response({
+        'projects': [{
+            'slug': p.slug,
+            'title': p.title or p.slug,
+            'created_at': p.created_at,
+            'files_count': p.files.count(),
+            'views': p.views,
+            'url': f'/p/{p.slug}/'
+        } for p in projects]
     })

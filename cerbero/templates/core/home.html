@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Cerbero · el guardián · El puente entre tu código y las IAs</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>Cerbero · el guardián</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,24 +11,12 @@
             --neon-pink: #ff00ff;
             --neon-purple: #b026ff;
             --neon-green: #00ff9d;
-            --neon-yellow: #ffff00;
             --dark-1: #050508;
             --dark-2: #0a0a0f;
             --dark-3: #12121a;
-            --glass: rgba(255, 255, 255, 0.03);
             --gradient-cyber: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--dark-1);
@@ -37,48 +24,6 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-
-        body.matrix-mode {
-            --neon-blue: #00ff00;
-            --neon-pink: #00ff00;
-            --neon-purple: #00ff41;
-            --gradient-cyber: linear-gradient(135deg, #00ff00, #00ff41, #008f11);
-        }
-
-        body.matrix-mode .grid-overlay {
-            background-image: 
-                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
-        }
-
-        .cursor {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--neon-blue);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s, background 0.3s;
-            mix-blend-mode: difference;
-        }
-
-        .cursor.hover {
-            transform: scale(2);
-            background: var(--neon-blue);
-            border-color: transparent;
-        }
-
-        .cursor-dot {
-            width: 4px;
-            height: 4px;
-            background: var(--neon-pink);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
         .bg-cyber {
             position: fixed;
             top: 0;
@@ -88,26 +33,21 @@
             z-index: -2;
             background: var(--dark-1);
         }
-
         .grid-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
             z-index: -1;
             animation: gridMove 20s linear infinite;
         }
-
         @keyframes gridMove {
             0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
             100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
         }
-
         .particles {
             position: fixed;
             top: 0;
@@ -117,7 +57,6 @@
             z-index: -1;
             overflow: hidden;
         }
-
         .particle {
             position: absolute;
             width: 2px;
@@ -127,14 +66,12 @@
             opacity: 0.5;
             animation: float 10s infinite;
         }
-
         @keyframes float {
             0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
             10% { opacity: 1; }
             90% { opacity: 1; }
             100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
-
         #matrix-canvas {
             position: fixed;
             top: 0;
@@ -146,477 +83,205 @@
             pointer-events: none;
             transition: opacity 0.5s;
         }
-
-        body.matrix-mode #matrix-canvas {
-            opacity: 0.3;
-        }
-
+        body.matrix-mode #matrix-canvas { opacity: 0.3; }
+        body.matrix-mode { --neon-blue: #00ff00; --neon-pink: #00ff00; --neon-purple: #00ff41; --gradient-cyber: linear-gradient(135deg, #00ff00, #00ff41, #008f11); }
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(5, 5, 8, 0.8);
-            backdrop-filter: blur(20px);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 20px 50px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 8, 0.8); backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(0, 243, 255, 0.1);
-            transition: all 0.3s;
         }
-
-        .header.scrolled {
-            padding: 15px 50px;
-            background: rgba(5, 5, 8, 0.95);
-        }
-
-        .logo-cyber {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-        }
-
         .logo-glitch {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: var(--gradient-cyber);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            animation: glitch 3s infinite;
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700;
+            background: var(--gradient-cyber); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        @keyframes glitch {
-            0%, 90%, 100% { transform: translate(0); }
-            92% { transform: translate(-2px, 2px); }
-            94% { transform: translate(2px, -2px); }
-            96% { transform: translate(-2px, -2px); }
-        }
-
-        .logo-tag {
-            font-size: 0.8rem;
-            color: var(--neon-green);
-            font-family: 'JetBrains Mono', monospace;
-            border: 1px solid var(--neon-green);
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-
-        .nav-cyber {
-            display: flex;
-            gap: 40px;
-        }
-
-        .nav-cyber a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            position: relative;
-            transition: all 0.3s;
-            padding: 5px 0;
-        }
-
-        .nav-cyber a::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--neon-blue);
-            transition: width 0.3s;
-            box-shadow: 0 0 10px var(--neon-blue);
-        }
-
-        .nav-cyber a:hover {
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue);
-        }
-
-        .nav-cyber a:hover::before {
-            width: 100%;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
+        .logo-tag { font-size: 0.8rem; color: var(--neon-green); font-family: monospace; border: 1px solid var(--neon-green); padding: 2px 8px; border-radius: 4px; margin-left: 10px; }
+        .nav-cyber { display: flex; gap: 40px; }
+        .nav-cyber a { color: rgba(255,255,255,0.7); text-decoration: none; transition: 0.3s; }
+        .nav-cyber a:hover { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
         .btn-cyber {
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            border: none;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-            overflow: hidden;
+            padding: 12px 28px; border-radius: 8px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; border: none; font-family: 'Inter', sans-serif;
         }
-
-        .btn-cyber::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-cyber:hover::before {
-            left: 100%;
-        }
-
-        .btn-cyber-outline {
-            background: transparent;
-            color: var(--neon-blue);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
-        }
-
-        .btn-cyber-outline:hover {
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .btn-cyber-fill {
-            background: var(--gradient-cyber);
-            color: #fff;
-            box-shadow: 0 0 30px rgba(176, 38, 255, 0.3);
-        }
-
-        .btn-cyber-fill:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 50px rgba(176, 38, 255, 0.5);
-        }
-
+        .btn-cyber-outline { background: transparent; color: var(--neon-blue); border: 1px solid var(--neon-blue); }
+        .btn-cyber-fill { background: var(--gradient-cyber); color: #fff; }
+        .btn-cyber-fill:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(176,38,255,0.5); }
         .matrix-toggle {
-            width: 50px;
-            height: 26px;
-            background: var(--dark-3);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 13px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            padding: 0 4px;
+            width: 50px; height: 26px; background: var(--dark-3); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 13px; cursor: pointer; display: flex; align-items: center; padding: 0 4px;
         }
-
-        .matrix-toggle.active {
-            background: rgba(0, 255, 0, 0.2);
-            border-color: #00ff00;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        }
-
         .matrix-toggle-knob {
-            width: 18px;
-            height: 18px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 50%;
-            transition: all 0.3s;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 18px; height: 18px; background: rgba(255,255,255,0.5); border-radius: 50%; transition: all 0.3s;
         }
-
-        .matrix-toggle.active .matrix-toggle-knob {
-            transform: translateX(24px);
-            background: #00ff00;
-            box-shadow: 0 0 10px #00ff00;
-        }
-
-        /* MODAL PARA LOGIN/REGISTRO */
+        .matrix-toggle.active .matrix-toggle-knob { transform: translateX(24px); background: #00ff00; box-shadow: 0 0 10px #00ff00; }
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
         }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
+        .modal-overlay.active { display: flex; }
         .modal-cyber {
-            background: var(--dark-2);
-            border: 2px solid var(--neon-blue);
-            border-radius: 24px;
-            padding: 40px;
-            max-width: 450px;
-            width: 90%;
-            position: relative;
-            animation: modalFadeIn 0.3s ease;
+            background: var(--dark-2); border: 2px solid var(--neon-blue); border-radius: 24px;
+            padding: 40px; max-width: 450px; width: 90%; position: relative;
         }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .modal-cyber h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin-bottom: 30px; text-align: center; background: var(--gradient-cyber); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .modal-cyber input { width: 100%; padding: 15px; margin-bottom: 20px; background: var(--dark-3); border: 1px solid rgba(0,243,255,0.3); border-radius: 8px; color: #fff; }
+        .modal-cyber input:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(0,243,255,0.3); }
+        .modal-cyber .switch-mode { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); cursor: pointer; }
+        .modal-cyber .switch-mode:hover { color: var(--neon-blue); }
+        .modal-cyber .close-modal { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: rgba(255,255,255,0.5); }
+        .error-message { color: #ff4444; font-size: 0.9rem; text-align: center; margin-bottom: 15px; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 40px; height: 40px; background: var(--gradient-cyber); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .username { font-weight: 600; color: var(--neon-blue); }
+        .logout-btn { cursor: pointer; color: rgba(255,255,255,0.5); }
+        .logout-btn:hover { color: #ff4444; }
+        .hero-cyber { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 150px 50px 100px; }
+        .hero-content-cyber { max-width: 1400px; width: 100%; display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .cyber-badge {
+            display: inline-flex; align-items: center; gap: 10px; background: rgba(0,255,157,0.1);
+            border: 1px solid var(--neon-green); padding: 10px 20px; border-radius: 50px;
+            font-size: 0.9rem; color: var(--neon-green); font-family: monospace; margin-bottom: 30px;
         }
-
-        .modal-cyber h2 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 30px;
-            text-align: center;
-            background: var(--gradient-cyber);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .cyber-badge::before { content: ''; width: 8px; height: 8px; background: var(--neon-green); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .hero-title-cyber { font-family: 'Space Grotesk', sans-serif; font-size: 5rem; font-weight: 700; line-height: 1; margin-bottom: 20px; }
+        .hero-title-cyber .line-1 { display: block; background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-title-cyber .line-2 { display: block; font-size: 3rem; color: var(--neon-purple); text-shadow: 0 0 30px rgba(176,38,255,0.5); margin-top: 10px; }
+        .hero-subtitle-cyber { font-size: 1.3rem; color: rgba(255,255,255,0.6); margin-bottom: 40px; max-width: 500px; }
+        .hero-cta-cyber { display: flex; gap: 20px; margin-bottom: 50px; flex-wrap: wrap; }
+        .btn-cyber-large { padding: 18px 40px; font-size: 1.1rem; border-radius: 12px; }
+        .hero-stats-cyber { display: flex; gap: 50px; padding-top: 30px; border-top: 1px solid rgba(0,243,255,0.1); flex-wrap: wrap; }
+        .stat-value-cyber { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--neon-blue); text-shadow: 0 0 20px rgba(0,243,255,0.5); }
+        .stat-label-cyber { font-size: 0.9rem; color: rgba(255,255,255,0.5); }
+        .hologram-terminal {
+            background: var(--dark-2); border: 1px solid rgba(0,243,255,0.2); border-radius: 20px;
+            padding: 30px; box-shadow: 0 0 50px rgba(0,243,255,0.1); animation: hologramFloat 6s ease-in-out infinite;
         }
-
-        .modal-cyber input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            background: var(--dark-3);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 8px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .modal-cyber input:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-        }
-
-        .modal-cyber button {
-            width: 100%;
-            padding: 15px;
-            margin-top: 10px;
-        }
-
-        .modal-cyber .switch-mode {
-            text-align: center;
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .modal-cyber .switch-mode:hover {
-            color: var(--neon-blue);
-        }
-
-        .modal-cyber .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.5);
-            transition: color 0.3s;
-        }
-
-        .modal-cyber .close-modal:hover {
-            color: var(--neon-pink);
-        }
-
-        .error-message {
-            color: #ff4444;
-            font-size: 0.9rem;
-            margin-top: -10px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        /* DASHBOARDD */
-        .dashboard-section {
-            padding: 100px 50px;
-            background: var(--dark-2);
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .project-card {
-            background: var(--dark-3);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 16px;
-            padding: 25px;
-            transition: all 0.3s;
-        }
-
-        .project-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
-        }
-
-        .project-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .project-card .project-slug {
-            color: var(--neon-blue);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        .project-card .project-stats {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
-        }
-
-        .project-card .project-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .project-card .project-actions a {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .project-card .view-btn {
-            background: var(--gradient-cyber);
-            color: #fff;
-        }
-
-        .project-card .delete-btn {
-            background: transparent;
-            border: 1px solid #ff4444;
-            color: #ff4444;
-        }
-
-        .project-card .delete-btn:hover {
-            background: #ff4444;
-            color: #fff;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--gradient-cyber);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .username {
-            font-weight: 600;
-            color: var(--neon-blue);
-        }
-
-        .logout-btn {
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.5);
-            transition: color 0.3s;
-        }
-
-        .logout-btn:hover {
-            color: #ff4444;
-        }
-
-        /* Resto de estilos cyberpunk (hero, features, etc) */
-        .hero-cyber {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 150px 50px 100px;
-        }
-
-        .hero-content-cyber {
-            max-width: 1400px;
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-
-        /* ... (mantener los estilos de hero, features, demo, etc de la versión anterior) ... */
-        /* Por brevedad, mantengo los estilos esenciales, pero en tu archivo final deben estar todos */
-
+        @keyframes hologramFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .terminal-header-cyber { display: flex; gap: 8px; margin-bottom: 25px; }
+        .terminal-dot-cyber { width: 12px; height: 12px; border-radius: 50%; }
+        .terminal-dot-cyber.red { background: #ff5f56; }
+        .terminal-dot-cyber.yellow { background: #ffbd2e; }
+        .terminal-dot-cyber.green { background: #27c93f; }
+        .terminal-body-cyber { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; }
+        .cmd-prompt { color: var(--neon-green); margin-bottom: 15px; }
+        .cmd-input { color: #fff; }
+        .cmd-input::after { content: '█'; animation: cursor 1s infinite; color: var(--neon-blue); }
+        @keyframes cursor { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+        .file-tree { margin: 20px 0; padding-left: 20px; border-left: 2px solid rgba(0,243,255,0.2); }
+        .tree-item { display: flex; justify-content: space-between; padding: 5px 0; color: var(--neon-blue); }
+        .tree-item .file-name { color: #fff; }
+        .tree-item .file-size { color: rgba(255,255,255,0.4); }
+        .progress-cyber { width: 100%; height: 4px; background: rgba(0,243,255,0.1); border-radius: 2px; margin: 20px 0; overflow: hidden; }
+        .progress-fill-cyber { height: 100%; background: var(--gradient-cyber); width: 0%; animation: loadFile 3s ease-out forwards; }
+        @keyframes loadFile { to { width: 100%; } }
+        .success-cyber { color: var(--neon-green); display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+        .link-generated { margin-top: 20px; padding: 15px; background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .link-url-cyber { color: var(--neon-pink); }
+        .marquee-section { background: var(--dark-2); border-top: 1px solid rgba(0,243,255,0.1); border-bottom: 1px solid rgba(0,243,255,0.1); padding: 20px 0; overflow: hidden; }
+        .marquee-track { display: flex; animation: marquee 20s linear infinite; width: fit-content; }
+        .marquee-item { display: flex; align-items: center; gap: 15px; padding: 0 40px; font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: rgba(255,255,255,0.6); white-space: nowrap; }
+        .marquee-item span { color: var(--neon-blue); font-size: 1.5rem; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .features-cyber { padding: 100px 50px; max-width: 1400px; margin: 0 auto; }
+        .section-header-cyber { text-align: center; margin-bottom: 60px; }
+        .section-tag-cyber { display: inline-block; font-family: monospace; font-size: 0.9rem; color: var(--neon-purple); border: 1px solid var(--neon-purple); padding: 8px 20px; border-radius: 4px; margin-bottom: 25px; }
+        .section-title-cyber { font-family: 'Space Grotesk', sans-serif; font-size: 3rem; font-weight: 700; margin-bottom: 20px; background: linear-gradient(135deg, #fff, var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .section-desc-cyber { color: rgba(255,255,255,0.5); font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+        .features-grid-cyber { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .feature-card-cyber { background: var(--dark-2); border: 1px solid rgba(0,243,255,0.1); border-radius: 16px; padding: 30px; transition: all 0.3s; }
+        .feature-card-cyber:hover { transform: translateY(-5px); border-color: rgba(0,243,255,0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .feature-icon-cyber { width: 60px; height: 60px; background: var(--dark-3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 20px; }
+        .feature-title-cyber { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin-bottom: 10px; }
+        .feature-ext-cyber { font-family: monospace; font-size: 0.8rem; color: var(--neon-blue); margin-bottom: 10px; }
+        .feature-desc-cyber { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+        .demo-cyber { padding: 100px 50px; background: var(--dark-2); }
+        .demo-container-cyber { max-width: 1200px; margin: 0 auto; }
+        .demo-grid-cyber { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .demo-text-cyber h3 { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 20px; }
+        .steps-cyber { display: flex; flex-direction: column; gap: 20px; margin-top: 30px; }
+        .step-cyber { display: flex; gap: 20px; padding: 20px; background: rgba(0,243,255,0.03); border-radius: 12px; transition: 0.3s; }
+        .step-cyber:hover { background: rgba(0,243,255,0.08); transform: translateX(10px); }
+        .step-num-cyber { width: 45px; height: 45px; background: var(--gradient-cyber); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; }
+        .upload-zone-cyber { background: var(--dark-3); border: 2px dashed rgba(0,243,255,0.3); border-radius: 24px; padding: 50px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .upload-zone-cyber:hover { border-color: var(--neon-blue); background: rgba(0,243,255,0.05); transform: scale(1.02); }
+        .upload-icon-cyber { width: 80px; height: 80px; background: var(--gradient-cyber); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 20px; animation: float-icon 3s ease-in-out infinite; }
+        @keyframes float-icon { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .quote-wow { background: var(--dark-2); border-radius: 24px; padding: 40px; margin: 50px; border-left: 6px solid var(--neon-blue); }
+        .quote-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .quote-icon { font-size: 2rem; }
+        .quote-author { color: var(--neon-blue); font-weight: 600; }
+        .quote-text { font-size: 1.2rem; line-height: 1.6; }
+        .quote-highlight { color: var(--neon-purple); font-weight: 600; }
+        .badges { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 50px; }
+        .badge { background: var(--dark-2); padding: 10px 24px; border-radius: 40px; border: 1px solid rgba(0,243,255,0.2); display: flex; align-items: center; gap: 8px; }
+        .badge span { color: var(--neon-blue); }
+        .cta-final { padding: 100px 50px; text-align: center; }
+        .cta-box { max-width: 800px; margin: 0 auto; background: var(--dark-2); border: 1px solid rgba(0,243,255,0.2); border-radius: 30px; padding: 60px; }
+        .cta-box h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 20px; background: linear-gradient(135deg, #fff, var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .cta-buttons-final { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        .footer-cyber { padding: 60px 50px 30px; border-top: 1px solid rgba(0,243,255,0.1); background: var(--dark-2); }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .footer-brand p { color: rgba(255,255,255,0.5); margin-top: 15px; }
+        .footer-links h4 { margin-bottom: 20px; color: #fff; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; }
+        .footer-links a:hover { color: var(--neon-blue); }
+        .footer-bottom-cyber { max-width: 1200px; margin: 0 auto; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .social-cyber { display: flex; gap: 15px; }
+        .social-btn-cyber { width: 45px; height: 45px; background: var(--dark-3); border: 1px solid rgba(0,243,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--neon-blue); text-decoration: none; transition: 0.3s; }
+        .social-btn-cyber:hover { background: var(--neon-blue); color: var(--dark-1); transform: translateY(-3px); }
+        .dashboard-section { padding: 100px 50px; background: var(--dark-2); }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; margin-top: 40px; }
+        .project-card { background: var(--dark-3); border: 1px solid rgba(0,243,255,0.2); border-radius: 16px; padding: 25px; transition: 0.3s; }
+        .project-card:hover { transform: translateY(-5px); border-color: var(--neon-blue); box-shadow: 0 0 30px rgba(0,243,255,0.2); }
+        .project-card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .project-slug { color: var(--neon-blue); font-family: monospace; font-size: 0.9rem; margin-bottom: 15px; }
+        .project-stats { display: flex; gap: 15px; margin-bottom: 20px; color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+        .project-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .edit-btn, .delete-btn, .view-btn { flex: 1; text-align: center; padding: 8px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; border: none; font-family: 'Inter', sans-serif; transition: 0.3s; }
+        .view-btn { background: var(--gradient-cyber); color: #fff; text-decoration: none; display: inline-block; }
+        .edit-btn { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); }
+        .edit-btn:hover { background: rgba(0,243,255,0.1); }
+        .delete-btn { background: transparent; border: 1px solid #ff4444; color: #ff4444; }
+        .delete-btn:hover { background: #ff4444; color: #fff; }
         @media (max-width: 1200px) {
-            .hero-content-cyber {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            .features-grid-cyber {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .hero-content-cyber { grid-template-columns: 1fr; text-align: center; }
+            .features-grid-cyber { grid-template-columns: repeat(2, 1fr); }
+            .demo-grid-cyber { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
         }
-
         @media (max-width: 768px) {
-            body { cursor: auto; }
-            .cursor, .cursor-dot { display: none; }
             .header { padding: 15px 20px; }
             .nav-cyber { display: none; }
             .features-grid-cyber { grid-template-columns: 1fr; }
+            .hero-title-cyber { font-size: 2.5rem; }
+            .hero-title-cyber .line-2 { font-size: 1.8rem; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .quote-wow { margin: 20px; }
+            .badges { margin: 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- MODAL LOGIN/REGISTRO -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-cyber">
             <span class="close-modal" onclick="closeAuthModal()">×</span>
             <h2 id="modalTitle">ACCESO</h2>
             <div id="loginForm">
-                <input type="text" id="loginUsername" placeholder="USUARIO" autocomplete="username">
-                <input type="password" id="loginPassword" placeholder="CONTRASEÑA" autocomplete="current-password">
+                <input type="text" id="loginUsername" placeholder="USUARIO">
+                <input type="password" id="loginPassword" placeholder="CONTRASEÑA">
                 <div id="loginError" class="error-message"></div>
                 <button class="btn-cyber btn-cyber-fill" onclick="handleLogin()">INGRESAR</button>
                 <div class="switch-mode" onclick="switchToRegister()">¿No tienes cuenta? Regístrate →</div>
             </div>
             <div id="registerForm" style="display: none;">
-                <input type="text" id="regUsername" placeholder="USUARIO" autocomplete="username">
-                <input type="email" id="regEmail" placeholder="EMAIL" autocomplete="email">
-                <input type="password" id="regPassword" placeholder="CONTRASEÑA" autocomplete="new-password">
+                <input type="text" id="regUsername" placeholder="USUARIO">
+                <input type="email" id="regEmail" placeholder="EMAIL">
+                <input type="password" id="regPassword" placeholder="CONTRASEÑA">
                 <div id="registerError" class="error-message"></div>
                 <button class="btn-cyber btn-cyber-fill" onclick="handleRegister()">REGISTRARSE</button>
                 <div class="switch-mode" onclick="switchToLogin()">← Ya tengo cuenta</div>
@@ -624,34 +289,28 @@
         </div>
     </div>
 
-    <!-- CURSOR -->
-    <div class="cursor"></div>
-    <div class="cursor-dot"></div>
-
-    <!-- BACKGROUND -->
     <div class="bg-cyber"></div>
     <div class="grid-overlay"></div>
     <canvas id="matrix-canvas"></canvas>
     <div class="particles" id="particles"></div>
 
-    <!-- HEADER -->
     <header class="header" id="header">
-        <a href="/" class="logo-cyber">
+        <a href="/" class="logo-cyber" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
             <div class="logo-glitch">🐕 CERBERO</div>
             <span class="logo-tag">v3.0</span>
         </a>
         <nav class="nav-cyber">
-            <a href="#features">Features</a>
+            <a href="#features">Características</a>
             <a href="#demo">Cómo funciona</a>
             <a href="#dashboard" id="dashboardLink" style="display: none;">Mis proyectos</a>
         </nav>
         <div class="header-actions">
-            <div class="matrix-toggle" id="matrixToggle" title="Activar Modo Matrix">
+            <div class="matrix-toggle" id="matrixToggle">
                 <div class="matrix-toggle-knob">💊</div>
             </div>
             <div id="authButtons">
-                <button class="btn-cyber btn-cyber-outline" onclick="openAuthModal()">Login</button>
-                <button class="btn-cyber btn-cyber-fill" onclick="openAuthModal()">Sign up</button>
+                <button class="btn-cyber btn-cyber-outline" onclick="openAuthModal()">REGISTRARSE</button>
+                <button class="btn-cyber btn-cyber-fill" onclick="openAuthModal()">INGRESAR</button>
             </div>
             <div id="userInfo" style="display: none;" class="user-info">
                 <div class="user-avatar">🐕</div>
@@ -661,7 +320,6 @@
         </div>
     </header>
 
-    <!-- HERO -->
     <section class="hero-cyber">
         <div class="hero-content-cyber">
             <div class="hero-text-cyber">
@@ -678,17 +336,14 @@
                     <div class="stat-cyber"><div class="stat-value-cyber">100MB</div><div class="stat-label-cyber">Máx por archivo</div></div>
                 </div>
             </div>
-
             <div class="hologram-terminal">
-                <div class="terminal-scanline"></div>
                 <div class="terminal-header-cyber">
                     <div class="terminal-dot-cyber red"></div>
                     <div class="terminal-dot-cyber yellow"></div>
                     <div class="terminal-dot-cyber green"></div>
-                    <span class="terminal-title-cyber">cerbero@guardian:~$ iniciando_secuencia</span>
                 </div>
                 <div class="terminal-body-cyber">
-                    <div class="cmd-prompt">$ <span class="cmd-input" id="terminalInput">cerbero upload --recursive</span></div>
+                    <div class="cmd-prompt">$ <span class="cmd-input">cerbero upload --recursive</span></div>
                     <div class="file-tree" id="fileTreePreview">
                         <div class="tree-item"><span class="file-name">📁 src/</span><span class="file-size">[DIRECTORIO]</span></div>
                         <div class="tree-item"><span class="file-name">  ├─ app.js</span><span class="file-size">45.1 KB</span></div>
@@ -706,7 +361,6 @@
         </div>
     </section>
 
-    <!-- DASHBOARD SECTION -->
     <section class="dashboard-section" id="dashboard">
         <div class="section-header-cyber">
             <span class="section-tag-cyber">:: MIS_PROYECTOS ::</span>
@@ -718,53 +372,49 @@
         </div>
     </section>
 
-    <!-- MARQUEE -->
     <div class="marquee-section"><div class="marquee-track"><div class="marquee-item"><span>⚡</span> 100% GRATIS</div><div class="marquee-item"><span>💳</span> SIN TARJETAS</div><div class="marquee-item"><span>🔒</span> ENCRIPTADO</div><div class="marquee-item"><span>🌐</span> ENLACE ÚNICO</div><div class="marquee-item"><span>🤖</span> IA READY</div><div class="marquee-item"><span>⚡</span> 100% GRATIS</div><div class="marquee-item"><span>💳</span> SIN TARJETAS</div><div class="marquee-item"><span>🔒</span> ENCRIPTADO</div><div class="marquee-item"><span>🌐</span> ENLACE ÚNICO</div><div class="marquee-item"><span>🤖</span> IA READY</div></div></div>
 
-    <!-- FEATURES (resumido) -->
     <section class="features-cyber" id="features">
         <div class="section-header-cyber"><span class="section-tag-cyber">:: SOPORTE_TECNOLÓGICO ::</span><h2 class="section-title-cyber">Formatos compatibles</h2><p class="section-desc-cyber">Si tu IA lo necesita, Cerbero lo transporta.</p></div>
         <div class="features-grid-cyber" id="featuresGrid"></div>
     </section>
 
-    <!-- QUOTE -->
-    <div class="quote-wow" style="margin: 50px;">
+    <div class="quote-wow">
         <div class="quote-header"><span class="quote-icon">🐕></span><span class="quote-author">Cerbero, el guardián</span></div>
         <div class="quote-text">"Las IAs no pueden acceder a tu PC por <span class="quote-highlight">políticas de privacidad</span>...<br>pero Cerbero <span class="quote-highlight">les pasa el mensaje</span>. Tú solo comparte el enlace único."</div>
     </div>
 
-    <!-- BADGES -->
     <div class="badges"><span class="badge"><span>⚡</span> 100% GRATIS</span><span class="badge"><span>💳</span> SIN TARJETAS</span><span class="badge"><span>🚫</span> SIN LÍMITES TONTOS</span><span class="badge"><span>🔒</span> PRIVACIDAD CONTROLADA</span><span class="badge"><span>🌐</span> ENLACE ÚNICO</span></div>
 
-    <!-- CTA FINAL -->
     <section class="cta-final">
         <div class="cta-box"><h2>Listo para liberar<br>el potencial de tus IAs?</h2><p>Únete a la revolución. Sube tu primer proyecto gratis, sin tarjetas, sin compromisos.</p><div class="cta-buttons-final"><button class="btn-cyber btn-cyber-fill btn-cyber-large" id="ctaUploadBtn">🚀 Subir proyecto ahora</button><button class="btn-cyber btn-cyber-outline btn-cyber-large">📺 Ver demo</button></div></div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="footer-cyber"><div class="footer-grid"><div class="footer-brand"><div class="logo-glitch" style="font-size: 1.5rem;">🐕 CERBERO</div><p>El guardián del contexto digital. Rompiendo barreras entre tu código y las IAs desde 2026.</p></div><div class="footer-links"><h4>Producto</h4><ul><li><a href="#features">Features</a></li><li><a href="#">Precios</a></li><li><a href="#">API</a></li></ul></div><div class="footer-links"><h4>Recursos</h4><ul><li><a href="#">Documentación</a></li><li><a href="#">Blog</a></li><li><a href="#">Soporte</a></li></ul></div><div class="footer-links"><h4>Legal</h4><ul><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li><li><a href="#">Seguridad</a></li></ul></div></div><div class="footer-bottom-cyber"><div class="footer-copyright">© 2026 Cerbero · Todos los derechos guardados</div><div class="social-cyber"><a href="#" class="social-btn-cyber">🐙</a><a href="#" class="social-btn-cyber">𝕏</a><a href="#" class="social-btn-cyber">💬</a></div></div></footer>
+    <footer class="footer-cyber">
+        <div class="footer-grid">
+            <div class="footer-brand"><div class="logo-glitch" style="font-size: 1.5rem;">🐕 CERBERO</div><p>El guardián del contexto digital. Rompiendo barreras entre tu código y las IAs desde 2026.</p></div>
+            <div class="footer-links"><h4>Producto</h4><ul><li><a href="#features">Características</a></li><li><a href="#">Precios</a></li><li><a href="#">API</a></li></ul></div>
+            <div class="footer-links"><h4>Recursos</h4><ul><li><a href="#">Documentación</a></li><li><a href="#">Blog</a></li><li><a href="#">Soporte</a></li></ul></div>
+            <div class="footer-links"><h4>Legal</h4><ul><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li><li><a href="#">Seguridad</a></li></ul></div>
+        </div>
+        <div class="footer-bottom-cyber"><div class="footer-copyright">© 2026 Cerbero · Todos los derechos guardados</div><div class="social-cyber"><a href="#" class="social-btn-cyber">🐙</a><a href="#" class="social-btn-cyber">𝕏</a><a href="#" class="social-btn-cyber">💬</a></div></div>
+    </footer>
 
     <script>
-        // ==================== VARIABLES GLOBALES ====================
         let accessToken = localStorage.getItem('accessToken');
         let currentUser = null;
 
-        // ==================== AUTENTICACIÓN ====================
         async function handleLogin() {
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
             const errorDiv = document.getElementById('loginError');
-            
             try {
-                const response = await fetch('/api/auth/login/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const res = await fetch('/api/auth/login/', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
+                const data = await res.json();
+                if (res.ok) {
                     localStorage.setItem('accessToken', data.access);
                     localStorage.setItem('refreshToken', data.refresh);
                     accessToken = data.access;
@@ -772,12 +422,8 @@
                     updateUIAfterLogin();
                     closeAuthModal();
                     loadUserProjects();
-                } else {
-                    errorDiv.textContent = data.error || 'Error al iniciar sesión';
-                }
-            } catch (error) {
-                errorDiv.textContent = 'Error de conexión';
-            }
+                } else { errorDiv.textContent = data.error || 'Error'; }
+            } catch(e) { errorDiv.textContent = 'Error de conexión'; }
         }
 
         async function handleRegister() {
@@ -785,17 +431,13 @@
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
             const errorDiv = document.getElementById('registerError');
-            
             try {
-                const response = await fetch('/api/auth/register/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const res = await fetch('/api/auth/register/', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, email, password })
                 });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
+                const data = await res.json();
+                if (res.ok) {
                     localStorage.setItem('accessToken', data.access);
                     localStorage.setItem('refreshToken', data.refresh);
                     accessToken = data.access;
@@ -803,30 +445,17 @@
                     updateUIAfterLogin();
                     closeAuthModal();
                     loadUserProjects();
-                } else {
-                    errorDiv.textContent = data.error || 'Error al registrarse';
-                }
-            } catch (error) {
-                errorDiv.textContent = 'Error de conexión';
-            }
+                } else { errorDiv.textContent = data.error || 'Error'; }
+            } catch(e) { errorDiv.textContent = 'Error de conexión'; }
         }
 
         async function handleLogout() {
             try {
-                const refreshToken = localStorage.getItem('refreshToken');
-                if (refreshToken) {
-                    await fetch('/api/auth/logout/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ refresh: refreshToken })
-                    });
-                }
-            } catch (e) {}
-            
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            accessToken = null;
-            currentUser = null;
+                const refresh = localStorage.getItem('refreshToken');
+                if (refresh) await fetch('/api/auth/logout/', { method: 'POST', body: JSON.stringify({ refresh }), headers: { 'Content-Type': 'application/json' } });
+            } catch(e) {}
+            localStorage.removeItem('accessToken'); localStorage.removeItem('refreshToken');
+            accessToken = null; currentUser = null;
             updateUIAfterLogout();
         }
 
@@ -844,148 +473,111 @@
             document.getElementById('projectsGrid').innerHTML = '<div style="text-align: center; grid-column: 1/-1; color: rgba(255,255,255,0.5);">Inicia sesión para ver tus proyectos</div>';
         }
 
-        // ==================== DASHBOARD ====================
         async function loadUserProjects() {
             if (!accessToken) return;
-            
             try {
-                const response = await fetch('/p/api/my-projects/', {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                });
-                
-                const data = await response.json();
+                const res = await fetch('/p/api/my-projects/', { headers: { 'Authorization': `Bearer ${accessToken}` } });
+                const data = await res.json();
                 const grid = document.getElementById('projectsGrid');
-                
-                if (data.projects && data.projects.length > 0) {
-                    grid.innerHTML = data.projects.map(project => `
+                if (data.projects && data.projects.length) {
+                    grid.innerHTML = data.projects.map(p => `
                         <div class="project-card">
-                            <h3>📁 ${project.title}</h3>
-                            <div class="project-slug">${project.slug}</div>
-                            <div class="project-stats">
-                                <span>📄 ${project.files_count} archivos</span>
-                                <span>👁️ ${project.views} vistas</span>
-                                <span>📅 ${new Date(project.created_at).toLocaleDateString()}</span>
-                            </div>
-                            <div class="project-actions">
-                                <a href="${project.url}" class="view-btn">Ver proyecto</a>
-                            </div>
+                            <h3>📁 ${p.title}</h3>
+                            <div class="project-slug">${p.slug}</div>
+                            <div class="project-stats"><span>📄 ${p.files_count} archivos</span><span>👁️ ${p.views} vistas</span><span>📅 ${new Date(p.created_at).toLocaleDateString()}</span></div>
+                            <div class="project-actions"><button class="edit-btn" onclick="editProject('${p.slug}')">✏️ Editar</button><a href="${p.url}" class="view-btn">Ver</a><button class="delete-btn" onclick="deleteProject('${p.slug}')">🗑️ Eliminar</button></div>
                         </div>
                     `).join('');
-                } else {
-                    grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; color: rgba(255,255,255,0.5);">No tienes proyectos aún. ¡Sube tu primer proyecto!</div>';
-                }
-            } catch (error) {
-                console.error('Error loading projects:', error);
-            }
+                } else { grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">No tienes proyectos aún. ¡Sube tu primer proyecto!</div>'; }
+            } catch(e) { console.error(e); }
         }
 
-        // ==================== MODAL ====================
-        function openAuthModal() {
-            document.getElementById('authModal').classList.add('active');
+        async function editProject(slug) {
+            const title = prompt('Nuevo título:');
+            if (!title) return;
+            try {
+                await fetch(`/p/${slug}/update/`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` }, body: JSON.stringify({ title }) });
+                loadUserProjects();
+            } catch(e) { alert('Error'); }
         }
 
-        function closeAuthModal() {
-            document.getElementById('authModal').classList.remove('active');
+        async function deleteProject(slug) {
+            if (!confirm('¿Eliminar proyecto?')) return;
+            try {
+                await fetch(`/p/${slug}/delete/`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${accessToken}` } });
+                loadUserProjects();
+            } catch(e) { alert('Error'); }
         }
 
-        function switchToRegister() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-            document.getElementById('modalTitle').textContent = 'REGISTRO';
-        }
+        function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
+        function closeAuthModal() { document.getElementById('authModal').classList.remove('active'); }
+        function switchToRegister() { document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; document.getElementById('modalTitle').textContent = 'REGISTRO'; }
+        function switchToLogin() { document.getElementById('registerForm').style.display = 'none'; document.getElementById('loginForm').style.display = 'block'; document.getElementById('modalTitle').textContent = 'ACCESO'; }
 
-        function switchToLogin() {
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('modalTitle').textContent = 'ACCESO';
-        }
-
-        // ==================== SUBIDA DE ARCHIVOS ====================
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.multiple = true;
-        fileInput.style.display = 'none';
-        document.body.appendChild(fileInput);
-
+        const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.multiple = true; fileInput.style.display = 'none'; document.body.appendChild(fileInput);
         async function uploadFiles(files) {
             if (!files.length) return;
-            
             const formData = new FormData();
-            for (let file of files) {
-                formData.append('files', file);
-            }
-            
-            if (accessToken) {
-                formData.append('user', currentUser.id);
-            }
-            
-            const uploadStatus = document.getElementById('uploadStatus') || (() => {
-                const div = document.createElement('div');
-                div.id = 'uploadStatus';
-                document.querySelector('.upload-content').appendChild(div);
-                return div;
-            })();
-            
-            uploadStatus.textContent = '📤 Subiendo archivos...';
-            
+            for (let f of files) formData.append('files', f);
+            const statusDiv = document.getElementById('uploadStatus') || (() => { let d = document.createElement('div'); d.id = 'uploadStatus'; document.querySelector('.upload-content')?.appendChild(d); return d; })();
+            statusDiv.textContent = '📤 Subiendo...';
             try {
-                const response = await fetch('/p/api/upload/', {
-                    method: 'POST',
-                    body: formData,
-                    headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}
-                });
-                
-                const data = await response.json();
-                
+                const res = await fetch('/p/api/upload/', { method: 'POST', body: formData, headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {} });
+                const data = await res.json();
                 if (data.success) {
-                    uploadStatus.innerHTML = `✅ Subidos ${data.count} archivos correctamente`;
+                    statusDiv.innerHTML = `✅ Subidos ${data.count} archivos`;
                     document.getElementById('successMessage').style.display = 'flex';
-                    const fullUrl = `${window.location.origin}${data.url}`;
-                    document.getElementById('generatedLink').innerHTML = `🔒 ${fullUrl}`;
+                    document.getElementById('generatedLink').innerHTML = `🔒 ${window.location.origin}${data.url}`;
                     document.getElementById('linkGenerated').style.display = 'flex';
-                    
-                    setTimeout(() => {
-                        window.location.href = data.url;
-                    }, 2000);
-                } else {
-                    uploadStatus.innerHTML = `❌ Error: ${data.error}`;
-                }
-            } catch (error) {
-                uploadStatus.innerHTML = `❌ Error de conexión`;
-            }
+                    setTimeout(() => window.location.href = data.url, 2000);
+                } else { statusDiv.innerHTML = `❌ Error: ${data.error}`; }
+            } catch(e) { statusDiv.innerHTML = '❌ Error de conexión'; }
         }
+        function triggerUpload() { fileInput.click(); }
+        fileInput.onchange = (e) => { uploadFiles(Array.from(e.target.files)); fileInput.value = ''; };
+        document.getElementById('openUploadBtn')?.addEventListener('click', triggerUpload);
+        document.getElementById('ctaUploadBtn')?.addEventListener('click', triggerUpload);
 
-        function triggerUpload() {
-            fileInput.click();
-        }
-
-        fileInput.addEventListener('change', (e) => {
-            uploadFiles(Array.from(e.target.files));
-            fileInput.value = '';
-        });
-
-        document.getElementById('openUploadBtn').addEventListener('click', triggerUpload);
-        document.getElementById('ctaUploadBtn').addEventListener('click', triggerUpload);
-
-        // ==================== INICIALIZACIÓN ====================
         function init() {
             if (accessToken) {
-                fetch('/api/auth/me/', {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                }).then(res => res.json()).then(user => {
-                    if (user.id) {
-                        currentUser = user;
-                        updateUIAfterLogin();
-                        loadUserProjects();
-                    }
-                }).catch(() => {
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
-                });
+                fetch('/api/auth/me/', { headers: { 'Authorization': `Bearer ${accessToken}` } }).then(r => r.json()).then(u => { if (u.id) { currentUser = u; updateUIAfterLogin(); loadUserProjects(); } }).catch(() => { localStorage.removeItem('accessToken'); localStorage.removeItem('refreshToken'); });
+            }
+            const featuresGrid = document.getElementById('featuresGrid');
+            if (featuresGrid) {
+                featuresGrid.innerHTML = [
+                    { icon: '💻', title: 'Código fuente', ext: '.js .ts .py .go .rs .java', desc: 'Syntax highlighting' },
+                    { icon: '🎨', title: 'Diseño UI/UX', ext: '.fig .sketch .xd .svg', desc: 'Extracción de componentes' },
+                    { icon: '🗄️', title: 'Base de datos', ext: '.sql .prisma .mongo', desc: 'Esquemas y queries' },
+                    { icon: '🐛', title: 'Debugging', ext: '.log .stack .crash', desc: 'Análisis de errores' },
+                    { icon: '📦', title: 'Proyectos ZIP', ext: '.zip .tar .rar', desc: 'Hasta 100MB' },
+                    { icon: '⚙️', title: 'Configuración', ext: '.json .yml .env', desc: 'Variables de entorno' },
+                    { icon: '📝', title: 'Documentación', ext: '.md .rst .txt .pdf', desc: 'Specs y READMEs' },
+                    { icon: '🔐', title: 'Modo Stealth', ext: 'AUTO_DESTRUCT', desc: 'Enlaces de un solo uso' }
+                ].map(f => `<div class="feature-card-cyber"><div class="feature-icon-cyber">${f.icon}</div><h3 class="feature-title-cyber">${f.title}</h3><div class="feature-ext-cyber">${f.ext}</div><p class="feature-desc-cyber">${f.desc}</p></div>`).join('');
+            }
+            const matrixToggle = document.getElementById('matrixToggle');
+            if (matrixToggle) {
+                matrixToggle.onclick = () => {
+                    document.body.classList.toggle('matrix-mode');
+                    matrixToggle.classList.toggle('active');
+                    localStorage.setItem('matrix-mode', document.body.classList.contains('matrix-mode'));
+                };
+                if (localStorage.getItem('matrix-mode') === 'true') { document.body.classList.add('matrix-mode'); matrixToggle.classList.add('active'); }
+            }
+            for (let i = 0; i < 100; i++) { let p = document.createElement('div'); p.classList.add('particle'); p.style.left = Math.random() * 100 + '%'; p.style.animationDelay = Math.random() * 10 + 's'; p.style.animationDuration = 5 + Math.random() * 10 + 's'; document.getElementById('particles')?.appendChild(p); }
+            const canvas = document.getElementById('matrix-canvas');
+            if (canvas) {
+                let ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+                let chars = "01010101010101010101010101010101010101010101010101010101";
+                let fontSize = 14, cols = canvas.width / fontSize, drops = Array(Math.floor(cols)).fill(0).map(() => Math.floor(Math.random() * -canvas.height));
+                function draw() { ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#0f0'; ctx.font = fontSize + 'px monospace'; for (let i = 0; i < drops.length; i++) { let char = chars[Math.floor(Math.random() * chars.length)]; ctx.fillText(char, i * fontSize, drops[i] * fontSize); if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; } }
+                setInterval(draw, 35);
+                window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; drops = Array(Math.floor(canvas.width / fontSize)).fill(0).map(() => Math.floor(Math.random() * -canvas.height)); });
             }
         }
-
         init();
+        window.copyLink = () => { navigator.clipboard.writeText(document.getElementById('generatedLink')?.innerText.replace('🔒 ', '') || ''); alert('Enlace copiado'); };
     </script>
 </body>
 </html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cerbero · Mi perfil</title>
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: monospace; padding: 100px 20px; }
+        .profile-container { max-width: 600px; margin: 0 auto; background: #12121a; border: 1px solid #00f3ff; border-radius: 20px; padding: 40px; }
+        h1 { color: #00f3ff; text-align: center; margin-bottom: 30px; }
+        .avatar { width: 100px; height: 100px; background: linear-gradient(135deg, #00f3ff, #b026ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 20px; }
+        .stats { display: flex; justify-content: space-around; margin: 30px 0; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 2rem; color: #00ff9d; }
+        .stat-label { color: rgba(255,255,255,0.5); }
+        .btn { background: linear-gradient(135deg, #00f3ff, #b026ff); padding: 12px 24px; border: none; border-radius: 8px; color: #fff; cursor: pointer; width: 100%; margin-top: 20px; }
+        .bio { margin: 20px 0; padding: 15px; background: #1e1e2a; border-radius: 10px; color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h1>🐕 Mi perfil</h1>
+        <div class="avatar" id="avatar">🐕</div>
+        <h2 id="username" style="text-align: center;"></h2>
+        <div class="bio" id="bio"></div>
+        <div class="stats" id="stats"></div>
+        <button class="btn" onclick="editBio()">✏️ Editar biografía</button>
+        <a href="/" class="btn" style="display: inline-block; text-align: center; text-decoration: none; margin-top: 10px;">← Volver</a>
+    </div>
+    <script>
+        const token = localStorage.getItem('accessToken');
+        if (!token) window.location.href = '/';
+        
+        async function loadProfile() {
+            const res = await fetch('/api/auth/profile/', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            document.getElementById('username').textContent = data.username;
+            document.getElementById('bio').textContent = data.bio || 'Sin biografía aún. Haz clic en editar para agregar una.';
+            document.getElementById('stats').innerHTML = `
+                <div class="stat"><div class="stat-value">${data.stats.projects}</div><div class="stat-label">Proyectos</div></div>
+                <div class="stat"><div class="stat-value">${data.stats.views}</div><div class="stat-label">Vistas totales</div></div>
+                <div class="stat"><div class="stat-value">${data.stats.files}</div><div class="stat-label">Archivos</div></div>
+            `;
+        }
+        
+        async function editBio() {
+            const newBio = prompt('Escribe tu biografía:');
+            if (newBio !== null) {
+                const res = await fetch('/api/auth/profile/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ bio: newBio })
+                });
+                if (res.ok) loadProfile();
+            }
+        }
+        
+        loadProfile();
+    </script>
+</body>
+</html>

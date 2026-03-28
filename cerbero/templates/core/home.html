@@ -303,6 +303,7 @@
             <a href="#features">Características</a>
             <a href="#demo">Cómo funciona</a>
             <a href="#dashboard" id="dashboardLink" style="display: none;">Mis proyectos</a>
+            <a href="/profile/" id="profileLink" style="display: none;">Mi perfil</a>
         </nav>
         <div class="header-actions">
             <div class="matrix-toggle" id="matrixToggle">
@@ -327,8 +328,7 @@
                 <h1 class="hero-title-cyber"><span class="line-1">El guardián</span><span class="line-2">del contexto digital</span></h1>
                 <p class="hero-subtitle-cyber">Rompe la barrera entre tu código y la IA. Sube tu proyecto, genera un enlace cifrado, y deja que cualquier inteligencia artificial acceda a tu contexto completo.</p>
                 <div class="hero-cta-cyber">
-                    <button class="btn-cyber btn-cyber-fill btn-cyber-large" id="openUploadBtn">🚀 Inicializar sistema</button>
-                    <button class="btn-cyber btn-cyber-outline btn-cyber-large">📖 Ver documentación</button>
+                    
                 </div>
                 <div class="hero-stats-cyber">
                     <div class="stat-cyber"><div class="stat-value-cyber">∞</div><div class="stat-label-cyber">Proyectos ilimitados</div></div>
@@ -361,6 +361,41 @@
         </div>
     </section>
 
+    <section class="demo-cyber" id="demo">
+        <div class="demo-container-cyber">
+            <div class="demo-grid-cyber">
+                <div class="demo-text-cyber">
+                    <span class="section-tag-cyber">:: PROTOCOLO ::</span>
+                    <h3>Sube. Comparte. Resuelve.<br>En ese orden.</h3>
+                    <p>Cerbero actúa como el puente cuántico entre tu entorno local y las IAs más potentes del planeta. Tu código nunca toca servidores permanentes: existe solo como contexto temporal.</p>
+                    <div class="steps-cyber">
+                        <div class="step-cyber"><div class="step-num-cyber">1</div><div class="step-content-cyber"><h4>Arrastra o selecciona</h4><p>Tus archivos, carpetas, o proyectos completos</p></div></div>
+                        <div class="step-cyber"><div class="step-num-cyber">2</div><div class="step-content-cyber"><h4>Encriptación automática</h4><p>Cerbero procesa y genera un hash único seguro</p></div></div>
+                        <div class="step-cyber"><div class="step-num-cyber">3</div><div class="step-content-cyber"><h4>Comparte con cualquier IA</h4><p>ChatGPT, Claude, Gemini, Copilot... todas entienden</p></div></div>
+                    </div>
+                </div>
+                <div class="upload-zone-cyber" id="uploadZone" style="cursor: pointer;">
+    <div class="upload-content">
+        <div class="upload-icon-cyber">📁</div>
+        <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 15px;">ZONA DE TRANSFERENCIA</h4>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 25px;">Arrastra archivos aquí o haz clic para explorar</p>
+        <div id="uploadStatus" style="margin-top: 15px; color: var(--neon-green);"></div>
+        <div class="expiration-selector" style="margin: 20px 0;">
+            <label style="color: var(--neon-blue); font-family: monospace;">⏱️ EXPIRACIÓN:</label>
+            <select id="expirationSelect" style="background: var(--dark-3); border: 1px solid rgba(0,243,255,0.3); color: #fff; padding: 8px 12px; border-radius: 6px; margin-left: 10px;">
+                <option value="">Nunca expira</option>
+                <option value="24">24 horas</option>
+                <option value="168">7 días</option>
+                <option value="720">30 días</option>
+            </select>
+        </div>
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="dashboard-section" id="dashboard">
         <div class="section-header-cyber">
             <span class="section-tag-cyber">:: MIS_PROYECTOS ::</span>
@@ -387,7 +422,7 @@
     <div class="badges"><span class="badge"><span>⚡</span> 100% GRATIS</span><span class="badge"><span>💳</span> SIN TARJETAS</span><span class="badge"><span>🚫</span> SIN LÍMITES TONTOS</span><span class="badge"><span>🔒</span> PRIVACIDAD CONTROLADA</span><span class="badge"><span>🌐</span> ENLACE ÚNICO</span></div>
 
     <section class="cta-final">
-        <div class="cta-box"><h2>Listo para liberar<br>el potencial de tus IAs?</h2><p>Únete a la revolución. Sube tu primer proyecto gratis, sin tarjetas, sin compromisos.</p><div class="cta-buttons-final"><button class="btn-cyber btn-cyber-fill btn-cyber-large" id="ctaUploadBtn">🚀 Subir proyecto ahora</button><button class="btn-cyber btn-cyber-outline btn-cyber-large">📺 Ver demo</button></div></div>
+        <div class="cta-box"><h2>Listo para liberar<br>el potencial de tus IAs?</h2><p>Únete a la revolución. Sube tu primer proyecto gratis, sin tarjetas, sin compromisos.</p><div class="cta-buttons-final"></div></div>
     </section>
 
     <footer class="footer-cyber">
@@ -420,6 +455,7 @@
                     accessToken = data.access;
                     currentUser = data.user;
                     updateUIAfterLogin();
+                    document.getElementById('profileLink').style.display = 'block';
                     closeAuthModal();
                     loadUserProjects();
                 } else { errorDiv.textContent = data.error || 'Error'; }
@@ -457,6 +493,7 @@
             localStorage.removeItem('accessToken'); localStorage.removeItem('refreshToken');
             accessToken = null; currentUser = null;
             updateUIAfterLogout();
+            document.getElementById('profileLink').style.display = 'none';
         }
 
         function updateUIAfterLogin() {
@@ -514,11 +551,57 @@
         function switchToRegister() { document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; document.getElementById('modalTitle').textContent = 'REGISTRO'; }
         function switchToLogin() { document.getElementById('registerForm').style.display = 'none'; document.getElementById('loginForm').style.display = 'block'; document.getElementById('modalTitle').textContent = 'ACCESO'; }
 
-        const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.multiple = true; fileInput.style.display = 'none'; document.body.appendChild(fileInput);
+        const fileInput = document.createElement('input'); 
+        fileInput.type = 'file'; 
+        fileInput.multiple = true; 
+        fileInput.style.display = 'none'; 
+        document.body.appendChild(fileInput);
+        
         async function uploadFiles(files) {
             if (!files.length) return;
             const formData = new FormData();
-            for (let f of files) formData.append('files', f);
+            for (let f of files) {
+                formData.append('files', f);
+            }
+            function triggerUpload() {
+                fileInput.click();
+            }
+
+            document.getElementById('uploadZone').addEventListener('click', triggerUpload);
+
+            fileInput.onchange = (e) => {
+                uploadFiles(Array.from(e.target.files));
+                fileInput.value = '';
+            };
+
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.style.borderColor = 'var(--neon-blue)';
+                uploadZone.style.background = 'rgba(0, 243, 255, 0.1)';
+            });
+
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+                uploadZone.style.background = 'var(--dark-3)';
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+                uploadZone.style.background = 'var(--dark-3)';
+                uploadFiles(Array.from(e.dataTransfer.files));
+            });
+
+            const expirationSelect = document.getElementById('expirationSelect');
+            if (expirationSelect && expirationSelect.value) {
+                formData.append('expiration', expirationSelect.value);
+            }
+            
+            if (accessToken) {
+                formData.append('user', currentUser?.id);
+            }
+            
             const statusDiv = document.getElementById('uploadStatus') || (() => { let d = document.createElement('div'); d.id = 'uploadStatus'; document.querySelector('.upload-content')?.appendChild(d); return d; })();
             statusDiv.textContent = '📤 Subiendo...';
             try {
@@ -533,10 +616,101 @@
                 } else { statusDiv.innerHTML = `❌ Error: ${data.error}`; }
             } catch(e) { statusDiv.innerHTML = '❌ Error de conexión'; }
         }
+        
         function triggerUpload() { fileInput.click(); }
         fileInput.onchange = (e) => { uploadFiles(Array.from(e.target.files)); fileInput.value = ''; };
-        document.getElementById('openUploadBtn')?.addEventListener('click', triggerUpload);
-        document.getElementById('ctaUploadBtn')?.addEventListener('click', triggerUpload);
+        // ==================== ZONA DE TRANSFERENCIA ====================
+const uploadZone = document.getElementById('uploadZone');
+
+if (uploadZone) {
+    // Crear input file oculto
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.multiple = true;
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    
+    // Función para subir archivos
+    async function uploadFiles(files) {
+        if (!files.length) return;
+        
+        const formData = new FormData();
+        for (let f of files) {
+            formData.append('files', f);
+        }
+        
+        const expirationSelect = document.getElementById('expirationSelect');
+        if (expirationSelect && expirationSelect.value) {
+            formData.append('expiration', expirationSelect.value);
+        }
+        
+        if (accessToken) {
+            formData.append('user', currentUser?.id);
+        }
+        
+        const statusDiv = document.getElementById('uploadStatus');
+        if (statusDiv) statusDiv.textContent = '📤 Subiendo archivos...';
+        
+        try {
+            const res = await fetch('/p/api/upload/', {
+                method: 'POST',
+                body: formData,
+                headers: accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                if (statusDiv) statusDiv.innerHTML = `✅ Subidos ${data.count} archivos correctamente`;
+                document.getElementById('successMessage').style.display = 'flex';
+                const fullUrl = `${window.location.origin}${data.url}`;
+                document.getElementById('generatedLink').innerHTML = `🔒 ${fullUrl}`;
+                document.getElementById('linkGenerated').style.display = 'flex';
+                setTimeout(() => window.location.href = data.url, 2000);
+            } else {
+                if (statusDiv) statusDiv.innerHTML = `❌ Error: ${data.error}`;
+            }
+        } catch(error) {
+            if (statusDiv) statusDiv.innerHTML = '❌ Error de conexión';
+        }
+    }
+    
+    // Función que abre el selector de archivos
+    function triggerUpload() {
+        fileInput.click();
+    }
+    
+    // Al hacer clic en la zona
+    uploadZone.addEventListener('click', triggerUpload);
+    
+    // Al seleccionar archivos
+    fileInput.onchange = (e) => {
+        uploadFiles(Array.from(e.target.files));
+        fileInput.value = '';
+    };
+    
+    // Arrastrar y soltar
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.style.borderColor = 'var(--neon-blue)';
+        uploadZone.style.background = 'rgba(0, 243, 255, 0.1)';
+    });
+    
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+        uploadZone.style.background = 'var(--dark-3)';
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.style.borderColor = 'rgba(0, 243, 255, 0.3)';
+        uploadZone.style.background = 'var(--dark-3)';
+        uploadFiles(Array.from(e.dataTransfer.files));
+    });
+    
+    console.log('✅ Zona de transferencia activada');
+} else {
+    console.log('❌ No se encontró la zona de transferencia');
+}
 
         function init() {
             if (accessToken) {
@@ -569,15 +743,19 @@
             if (canvas) {
                 let ctx = canvas.getContext('2d');
                 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-                let chars = "01010101010101010101010101010101010101010101010101010101";
+                let chars = "01";
                 let fontSize = 14, cols = canvas.width / fontSize, drops = Array(Math.floor(cols)).fill(0).map(() => Math.floor(Math.random() * -canvas.height));
                 function draw() { ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#0f0'; ctx.font = fontSize + 'px monospace'; for (let i = 0; i < drops.length; i++) { let char = chars[Math.floor(Math.random() * chars.length)]; ctx.fillText(char, i * fontSize, drops[i] * fontSize); if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; } }
                 setInterval(draw, 35);
                 window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; drops = Array(Math.floor(canvas.width / fontSize)).fill(0).map(() => Math.floor(Math.random() * -canvas.height)); });
             }
+            
         }
         init();
+        
         window.copyLink = () => { navigator.clipboard.writeText(document.getElementById('generatedLink')?.innerText.replace('🔒 ', '') || ''); alert('Enlace copiado'); };
+    
+    
     </script>
 </body>
 </html>

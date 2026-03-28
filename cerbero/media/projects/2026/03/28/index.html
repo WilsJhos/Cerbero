@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 ABC Mágico - Aprende el Abecedario</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Controles de Accesibilidad -->
+    <div class="accessibility-controls">
+        <button onclick="toggleSound()" id="soundBtn" title="Activar/Desactivar Sonido">🔊</button>
+        <button onclick="toggleTheme()" id="themeBtn" title="Cambiar Tema (Día/Noche)">🌙</button>
+        <button onclick="toggleGameMode()" id="modeBtn" title="Cambiar Modo de Juego">🎮</button>
+        <button onclick="resetProgress()" id="resetBtn" title="Reiniciar Progreso">🔄</button>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎨 ABC Mágico</h1>
+            <p class="subtitle">¡Aprende el Abecedario Divirtiéndote!</p>
+        </header>
+
+        <!-- Panel de Estadísticas -->
+        <section class="stats-panel" aria-label="Estadísticas del Usuario">
+            <div class="stat-card">
+                <div class="icon">📚</div>
+                <div class="value" id="levelValue">1</div>
+                <div class="label">Nivel</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">⭐</div>
+                <div class="value" id="starsValue">0</div>
+                <div class="label">Estrellas</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🔥</div>
+                <div class="value" id="streakValue">0</div>
+                <div class="label">Racha</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">✅</div>
+                <div class="value" id="correctValue">0/0</div>
+                <div class="label">Aciertos</div>
+            </div>
+        </section>
+
+        <!-- Barra de Progreso -->
+        <section class="progress-container">
+            <h3>Tu Progreso</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+        </section>
+
+        
+        <section id="exploreMode" class="game-mode active">
+            <h2 class="mode-title">🔍 Explora las Letras</h2>
+            <p class="mode-description">Toca cada letra para escuchar su sonido</p>
+            <div class="alphabet-grid" id="alphabetGrid"></div>
+        </section>
+
+        <!-- BUSCAR LA LETRA -->
+        <section id="searchMode" class="game-mode">
+            <h2 class="mode-title">🎯 ¡Busca la Letra!</h2>
+            <p class="mode-description">Encuentra la letra que te mostramos</p>
+            
+            <!-- Fase 1 -->
+            <div class="target-letter-container" id="targetContainer">
+                <div class="target-letter-card">
+                    <span class="target-letter" id="targetLetter">A</span>
+                    <span class="target-word" id="targetWord">Avión</span>
+                    <div class="target-image" id="targetImage">✈️</div>
+                </div>
+                <button class="btn btn-start" onclick="startSearch()">¡Comenzar!</button>
+            </div>
+
+            <!-- Fase 2 -->
+            <div class="search-container" id="searchContainer" style="display: none;">
+                <p class="search-instruction">¿Dónde está la <span id="searchLetter">A</span>?</p>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+        </section>
+
+    </div>
+
+    
+    <div class="celebration-modal" id="celebrationModal" role="dialog" aria-modal="true">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉</div>
+            <h2>¡Felicidades!</h2>
+            <h3>Lo Lograste</h3>
+            <div class="celebration-stars" id="celebrationStars">⭐⭐⭐</div>
+            <div class="celebration-balloons" id="celebrationBalloons">🎈🎈</div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="nextRound()">Siguiente ➡️</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Descansar ⏸️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pista -->
+    <div class="hint-modal" id="hintModal">
+        <div class="hint-content">
+            <p>💡 Pista: La letra es <span id="hintLetter"></span></p>
+        </div>
+    </div>
+
+    <!-- Sonido -->
+    <div class="sound-wave" id="soundWave" aria-hidden="true">
+        <span style="animation-delay: 0s"></span>
+        <span style="animation-delay: 0.1s"></span>
+        <span style="animation-delay: 0.2s"></span>
+        <span style="animation-delay: 0.3s"></span>
+        <span style="animation-delay: 0.4s"></span>
+    </div>
+
+    <!-- Contador de Intentos -->
+    <div class="attempt-counter" id="attemptCounter">
+        Intento: <span id="attemptValue">1</span>/3
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

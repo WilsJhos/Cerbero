@@ -5,7 +5,6 @@ import string
 from datetime import datetime, timedelta
 
 def generate_slug():
-    """Genera un slug único de 6 caracteres"""
     alphabet = string.ascii_lowercase + string.digits
     return ''.join(secrets.choice(alphabet) for _ in range(6))
 
@@ -34,10 +33,21 @@ class Project(models.Model):
         super().save(*args, **kwargs)
     
     def is_expired(self):
-        """Verifica si el proyecto ha expirado"""
         if self.expires_at:
             return datetime.now() > self.expires_at
         return False
+    
+    def get_expiration_display(self):
+        if not self.expires_at:
+            return "Nunca expira"
+        days = (self.expires_at - self.created_at).days
+        if days == 1:
+            return "24 horas"
+        elif days == 7:
+            return "7 días"
+        elif days == 30:
+            return "30 días"
+        return f"{days} días"
 
 class ProjectFile(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='files')

@@ -25,11 +25,29 @@ def project_view(request, slug):
     project.views += 1
     project.save()
     
+    # Modo JSON (para APIs)
+    if request.GET.get('mode') == 'json':
+        return JsonResponse({
+            'project': {
+                'slug': project.slug,
+                'title': project.title or project.slug,
+                'description': project.description,
+                'created_at': project.created_at.isoformat(),
+                'expires_at': project.expires_at.isoformat() if project.expires_at else None,
+                'views': project.views,
+                'files': [{
+                    'name': f.original_name,
+                    'size': f.size,
+                    'type': f.file_type,
+                    'url': request.build_absolute_uri(f.file.url)
+                } for f in files]
+            }
+        })
+    
     # Modo IA (texto plano optimizado)
     if request.GET.get('mode') == 'ia' or request.GET.get('mode') == 'text':
         response = HttpResponse(content_type='text/plain; charset=utf-8')
         
-        # Header con metadatos
         response.write(f"# PROYECTO: {project.title or project.slug}\n")
         response.write(f"# DESCRIPCIÓN: {project.description or 'Sin descripción'}\n")
         response.write(f"# ARCHIVOS: {files.count()}\n")
@@ -48,6 +66,9 @@ def project_view(request, slug):
             try:
                 with open(file.file.path, 'r', encoding='utf-8') as f:
                     content = f.read()
+                    # Limitar tamaño para no abusar
+                    if len(content) > 100000:
+                        content = content[:100000] + "\n... [CONTENIDO TRUNCADO]"
                     response.write(content)
             except (UnicodeDecodeError, FileNotFoundError, OSError):
                 response.write("[ARCHIVO BINARIO - No se puede mostrar en texto plano]")
@@ -66,11 +87,12 @@ def project_view(request, slug):
 @csrf_exempt
 @require_http_methods(["POST"])
 def upload_file(request):
-    """Endpoint para subir archivos"""
+    """Endpoint para subir archivos con expiración opcional"""
     try:
         slug = request.POST.get('slug')
+        expiration_hours = request.POST.get('expiration')  # 24, 168, 720
         
-        # Verificar si hay usuario autenticado
+        # Verificar usuario autenticado
         user = None
         auth_header = request.headers.get('Authorization')
         if auth_header and auth_header.startswith('Bearer '):
@@ -89,6 +111,15 @@ def upload_file(request):
             project = Project.objects.get(slug=slug)
         else:
             project = Project.objects.create(user=user)
+            
+            # Configurar expiración si se envió
+            if expiration_hours:
+                try:
+                    hours = int(expiration_hours)
+                    project.expires_at = datetime.now() + timedelta(hours=hours)
+                    project.save()
+                except:
+                    pass
         
         files = request.FILES.getlist('files')
         uploaded_files = []
@@ -119,7 +150,9 @@ def upload_file(request):
             'full_url': request.build_absolute_uri(f'/p/{project.slug}/'),
             'files': uploaded_files,
             'count': len(uploaded_files),
-            'user': user.username if user else None
+            'user': user.username if user else None,
+            'expires_at': project.expires_at.isoformat() if project.expires_at else None,
+            'expiration_display': project.get_expiration_display()
         })
         
     except Project.DoesNotExist:

@@ -265,196 +265,45 @@
             .badges { margin: 20px; }
         }
     </style>
-</head>
-<body>
-    <div class="modal-overlay" id="authModal">
-        <div class="modal-cyber">
-            <span class="close-modal" onclick="closeAuthModal()">×</span>
-            <h2 id="modalTitle">ACCESO</h2>
-            <div id="loginForm">
-                <input type="text" id="loginUsername" placeholder="USUARIO">
-                <input type="password" id="loginPassword" placeholder="CONTRASEÑA">
-                <div id="loginError" class="error-message"></div>
-                <button class="btn-cyber btn-cyber-fill" onclick="handleLogin()">INGRESAR</button>
-                <div class="switch-mode" onclick="switchToRegister()">¿No tienes cuenta? Regístrate →</div>
-            </div>
-            <div id="registerForm" style="display: none;">
-                <input type="text" id="regUsername" placeholder="USUARIO">
-                <input type="email" id="regEmail" placeholder="EMAIL">
-                <input type="password" id="regPassword" placeholder="CONTRASEÑA">
-                <div id="registerError" class="error-message"></div>
-                <button class="btn-cyber btn-cyber-fill" onclick="handleRegister()">REGISTRARSE</button>
-                <div class="switch-mode" onclick="switchToLogin()">← Ya tengo cuenta</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-cyber"></div>
-    <div class="grid-overlay"></div>
-    <canvas id="matrix-canvas"></canvas>
-    <div class="particles" id="particles"></div>
-
-    <header class="header" id="header">
-        <a href="/" class="logo-cyber" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
-            <div class="logo-glitch">🐕 CERBERO</div>
-            <span class="logo-tag">v3.0</span>
-        </a>
-        <nav class="nav-cyber">
-            <a href="#features">Características</a>
-            <a href="#demo">Cómo funciona</a>
-            <a href="#dashboard" id="dashboardLink" style="display: none;">Mis proyectos</a>
-            <a href="/profile/" id="profileLink" style="display: none;">Mi perfil</a>
-        </nav>
-        <div class="header-actions">
-            <div class="matrix-toggle" id="matrixToggle">
-                <div class="matrix-toggle-knob">💊</div>
-            </div>
-            <div id="authButtons">
-                <button class="btn-cyber btn-cyber-outline" onclick="openAuthModal()">REGISTRARSE</button>
-                <button class="btn-cyber btn-cyber-fill" onclick="openAuthModal()">INGRESAR</button>
-            </div>
-            <div id="userInfo" style="display: none;" class="user-info">
-                <div class="user-avatar">🐕</div>
-                <span class="username" id="usernameDisplay"></span>
-                <span class="logout-btn" onclick="handleLogout()">🚪</span>
-            </div>
-        </div>
-    </header>
-
-    <section class="hero-cyber">
-        <div class="hero-content-cyber">
-            <div class="hero-text-cyber">
-                <div class="cyber-badge">SISTEMA OPERATIVO: ONLINE</div>
-                <h1 class="hero-title-cyber"><span class="line-1">El guardián</span><span class="line-2">del contexto digital</span></h1>
-                <p class="hero-subtitle-cyber">Rompe la barrera entre tu código y la IA. Sube tu proyecto, genera un enlace cifrado, y deja que cualquier inteligencia artificial acceda a tu contexto completo.</p>
-                <div class="hero-cta-cyber">
-                    
-                </div>
-                <div class="hero-stats-cyber">
-                    <div class="stat-cyber"><div class="stat-value-cyber">∞</div><div class="stat-label-cyber">Proyectos ilimitados</div></div>
-                    <div class="stat-cyber"><div class="stat-value-cyber">0</div><div class="stat-label-cyber">Costo inicial</div></div>
-                    <div class="stat-cyber"><div class="stat-value-cyber">100MB</div><div class="stat-label-cyber">Máx por archivo</div></div>
+<section class="demo-cyber" id="demo">
+    <div class="demo-container-cyber">
+        <div class="demo-grid-cyber">
+            <div class="demo-text-cyber">
+                <span class="section-tag-cyber">:: PROTOCOLO ::</span>
+                <h3>Sube. Comparte. Resuelve.<br>En ese orden.</h3>
+                <p>Cerbero actúa como el puente cuántico entre tu entorno local y las IAs más potentes del planeta. Tu código nunca toca servidores permanentes: existe solo como contexto temporal.</p>
+                <div class="steps-cyber">
+                    <div class="step-cyber"><div class="step-num-cyber">1</div><div class="step-content-cyber"><h4>Arrastra o selecciona</h4><p>Tus archivos, carpetas, o proyectos completos</p></div></div>
+                    <div class="step-cyber"><div class="step-num-cyber">2</div><div class="step-content-cyber"><h4>Encriptación automática</h4><p>Cerbero procesa y genera un hash único seguro</p></div></div>
+                    <div class="step-cyber"><div class="step-num-cyber">3</div><div class="step-content-cyber"><h4>Comparte con cualquier IA</h4><p>ChatGPT, Claude, Gemini, Copilot... todas entienden</p></div></div>
                 </div>
             </div>
-            <div class="hologram-terminal">
-                <div class="terminal-header-cyber">
-                    <div class="terminal-dot-cyber red"></div>
-                    <div class="terminal-dot-cyber yellow"></div>
-                    <div class="terminal-dot-cyber green"></div>
-                </div>
-                <div class="terminal-body-cyber">
-                    <div class="cmd-prompt">$ <span class="cmd-input">cerbero upload --recursive</span></div>
-                    <div class="file-tree" id="fileTreePreview">
-                        <div class="tree-item"><span class="file-name">📁 src/</span><span class="file-size">[DIRECTORIO]</span></div>
-                        <div class="tree-item"><span class="file-name">  ├─ app.js</span><span class="file-size">45.1 KB</span></div>
-                        <div class="tree-item"><span class="file-name">  ├─ styles.css</span><span class="file-size">8.2 KB</span></div>
-                        <div class="tree-item"><span class="file-name">  └─ index.html</span><span class="file-size">12.4 KB</span></div>
+            <div class="upload-zone-cyber" id="uploadZone" style="cursor: pointer;">
+                <div class="upload-content">
+                    <div class="upload-icon-cyber">📁</div>
+                    <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 15px;">ZONA DE TRANSFERENCIA</h4>
+                    <p style="color: rgba(255,255,255,0.5); margin-bottom: 25px;">Arrastra archivos aquí o haz clic para explorar</p>
+                    <div id="uploadStatus" style="margin-top: 15px; color: var(--neon-green);"></div>
+                    <div class="expiration-selector" style="margin: 20px 0;">
+                        <label style="color: var(--neon-blue); font-family: monospace;">⏱️ EXPIRACIÓN:</label>
+                        <select id="expirationSelect" style="background: var(--dark-3); border: 1px solid rgba(0,243,255,0.3); color: #fff; padding: 8px 12px; border-radius: 6px; margin-left: 10px;">
+                            <option value="">Nunca expira</option>
+                            <option value="24">24 horas</option>
+                            <option value="168">7 días</option>
+                            <option value="720">30 días</option>
+                        </select>
                     </div>
-                    <div class="progress-cyber"><div class="progress-fill-cyber" id="progressFill"></div></div>
-                    <div class="success-cyber" id="successMessage" style="display: none;"><span>✓</span> ENCRIPTACIÓN COMPLETADA — ENLACE GENERADO</div>
-                    <div class="link-generated" id="linkGenerated" style="display: none;">
-                        <span class="link-url-cyber" id="generatedLink">🔒 https://cerb.ro/p/</span>
-                        <span style="color: var(--neon-blue); cursor: pointer;" onclick="copyLink()">[COPIAR]</span>
+                    <div class="legal-notice" style="margin-top: 15px; font-size: 0.7rem; color: rgba(255,255,255,0.4); text-align: center;">
+                        Al subir archivos, aceptas nuestros 
+                        <a href="/terms/" style="color: var(--neon-blue);">Términos</a> y 
+                        <a href="/privacy/" style="color: var(--neon-blue);">Política de Privacidad</a>. 
+                        Cerbero no se responsabiliza por el uso indebido de los enlaces compartidos.
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section class="demo-cyber" id="demo">
-        <div class="demo-container-cyber">
-            <div class="demo-grid-cyber">
-                <div class="demo-text-cyber">
-                    <span class="section-tag-cyber">:: PROTOCOLO ::</span>
-                    <h3>Sube. Comparte. Resuelve.<br>En ese orden.</h3>
-                    <p>Cerbero actúa como el puente cuántico entre tu entorno local y las IAs más potentes del planeta. Tu código nunca toca servidores permanentes: existe solo como contexto temporal.</p>
-                    <div class="steps-cyber">
-                        <div class="step-cyber"><div class="step-num-cyber">1</div><div class="step-content-cyber"><h4>Arrastra o selecciona</h4><p>Tus archivos, carpetas, o proyectos completos</p></div></div>
-                        <div class="step-cyber"><div class="step-num-cyber">2</div><div class="step-content-cyber"><h4>Encriptación automática</h4><p>Cerbero procesa y genera un hash único seguro</p></div></div>
-                        <div class="step-cyber"><div class="step-num-cyber">3</div><div class="step-content-cyber"><h4>Comparte con cualquier IA</h4><p>ChatGPT, Claude, Gemini, Copilot... todas entienden</p></div></div>
-                    </div>
-                </div>
-                <div class="upload-zone-cyber" id="uploadZone" style="cursor: pointer;">
-    <div class="upload-content">
-        <div class="upload-icon-cyber">📁</div>
-        <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 15px;">ZONA DE TRANSFERENCIA</h4>
-        <p style="color: rgba(255,255,255,0.5); margin-bottom: 25px;">Arrastra archivos aquí o haz clic para explorar</p>
-        <div id="uploadStatus" style="margin-top: 15px; color: var(--neon-green);"></div>
-        <div class="expiration-selector" style="margin: 20px 0;">
-            <label style="color: var(--neon-blue); font-family: monospace;">⏱️ EXPIRACIÓN:</label>
-            <select id="expirationSelect" style="background: var(--dark-3); border: 1px solid rgba(0,243,255,0.3); color: #fff; padding: 8px 12px; border-radius: 6px; margin-left: 10px;">
-                <option value="">Nunca expira</option>
-                <option value="24">24 horas</option>
-                <option value="168">7 días</option>
-                <option value="720">30 días</option>
-            </select>
-        </div>
-        <div class="legal-notice" style="margin-top: 15px; font-size: 0.7rem; color: rgba(255,255,255,0.4); text-align: center;">
-            Al subir archivos, aceptas nuestros 
-            <a href="/terms/" style="color: var(--neon-blue);">Términos</a> y 
-            <a href="/privacy/" style="color: var(--neon-blue);">Política de Privacidad</a>. 
-            Cerbero no se responsabiliza por el uso indebido de los enlaces compartidos.
-        </div>
     </div>
-</div>
-        <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 15px;">ZONA DE TRANSFERENCIA</h4>
-        <p style="color: rgba(255,255,255,0.5); margin-bottom: 25px;">Arrastra archivos aquí o haz clic para explorar</p>
-        <div id="uploadStatus" style="margin-top: 15px; color: var(--neon-green);"></div>
-        <div class="expiration-selector" style="margin: 20px 0;">
-            <label style="color: var(--neon-blue); font-family: monospace;">⏱️ EXPIRACIÓN:</label>
-            <select id="expirationSelect" style="background: var(--dark-3); border: 1px solid rgba(0,243,255,0.3); color: #fff; padding: 8px 12px; border-radius: 6px; margin-left: 10px;">
-                <option value="">Nunca expira</option>
-                <option value="24">24 horas</option>
-                <option value="168">7 días</option>
-                <option value="720">30 días</option>
-            </select>
-        </div>
-    
-    </div>
-</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="dashboard-section" id="dashboard">
-        <div class="section-header-cyber">
-            <span class="section-tag-cyber">:: MIS_PROYECTOS ::</span>
-            <h2 class="section-title-cyber">Tus proyectos guardados</h2>
-            <p class="section-desc-cyber">Todos tus proyectos en un solo lugar. Accede a ellos cuando quieras.</p>
-        </div>
-        <div class="projects-grid" id="projectsGrid">
-            <div style="text-align: center; grid-column: 1/-1; color: rgba(255,255,255,0.5);">Inicia sesión para ver tus proyectos</div>
-        </div>
-    </section>
-
-    <div class="marquee-section"><div class="marquee-track"><div class="marquee-item"><span>⚡</span> 100% GRATIS</div><div class="marquee-item"><span>💳</span> SIN TARJETAS</div><div class="marquee-item"><span>🔒</span> ENCRIPTADO</div><div class="marquee-item"><span>🌐</span> ENLACE ÚNICO</div><div class="marquee-item"><span>🤖</span> IA READY</div><div class="marquee-item"><span>⚡</span> 100% GRATIS</div><div class="marquee-item"><span>💳</span> SIN TARJETAS</div><div class="marquee-item"><span>🔒</span> ENCRIPTADO</div><div class="marquee-item"><span>🌐</span> ENLACE ÚNICO</div><div class="marquee-item"><span>🤖</span> IA READY</div></div></div>
-
-    <section class="features-cyber" id="features">
-        <div class="section-header-cyber"><span class="section-tag-cyber">:: SOPORTE_TECNOLÓGICO ::</span><h2 class="section-title-cyber">Formatos compatibles</h2><p class="section-desc-cyber">Si tu IA lo necesita, Cerbero lo transporta.</p></div>
-        <div class="features-grid-cyber" id="featuresGrid"></div>
-    </section>
-
-    <div class="quote-wow">
-        <div class="quote-header"><span class="quote-icon">🐕></span><span class="quote-author">Cerbero, el guardián</span></div>
-        <div class="quote-text">"Las IAs no pueden acceder a tu PC por <span class="quote-highlight">políticas de privacidad</span>...<br>pero Cerbero <span class="quote-highlight">les pasa el mensaje</span>. Tú solo comparte el enlace único."</div>
-    </div>
-
-    <div class="badges"><span class="badge"><span>⚡</span> 100% GRATIS</span><span class="badge"><span>💳</span> SIN TARJETAS</span><span class="badge"><span>🚫</span> SIN LÍMITES TONTOS</span><span class="badge"><span>🔒</span> PRIVACIDAD CONTROLADA</span><span class="badge"><span>🌐</span> ENLACE ÚNICO</span></div>
-
-    <section class="cta-final">
-        <div class="cta-box"><h2>Listo para liberar<br>el potencial de tus IAs?</h2><p>Únete a la revolución. Sube tu primer proyecto gratis, sin tarjetas, sin compromisos.</p><div class="cta-buttons-final"></div></div>
-    </section>
-
-    <footer class="footer-cyber">
-        <div class="footer-grid">
-            <div class="footer-brand"><div class="logo-glitch" style="font-size: 1.5rem;">🐕 CERBERO</div><p>El guardián del contexto digital. Rompiendo barreras entre tu código y las IAs desde 2026.</p></div>
-            <div class="footer-links"><h4>Producto</h4><ul><li><a href="#features">Características</a></li><li><a href="#">Precios</a></li><li><a href="#">API</a></li></ul></div>
-            <div class="footer-links"><h4>Recursos</h4><ul><li><a href="#">Documentación</a></li><li><a href="#">Blog</a></li><li><a href="#">Soporte</a></li></ul></div>
-            <div class="footer-links"><h4>Legal</h4><ul><li><a href="/privacy/">Privacidad</a></li><li><a href="/terms/">Términos</a></li><li><a href="/cookies/">Cookies</a></li></ul></div>
-        </div>
-        <div class="footer-bottom-cyber"><div class="footer-copyright">© 2026 Cerbero · Todos los derechos guardados</div><div class="social-cyber"><a href="#" class="social-btn-cyber">🐙</a><a href="#" class="social-btn-cyber">𝕏</a><a href="#" class="social-btn-cyber">💬</a></div></div>
-    </footer>
+</section>
 
     <script>
         let accessToken = localStorage.getItem('accessToken');

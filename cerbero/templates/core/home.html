@@ -657,14 +657,12 @@
 const uploadZone = document.getElementById('uploadZone');
 
 if (uploadZone) {
-    // Crear input file oculto
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.multiple = true;
     fileInput.style.display = 'none';
     document.body.appendChild(fileInput);
     
-    // Función para subir archivos
     async function uploadFiles(files) {
         if (!files.length) return;
         
@@ -708,21 +706,17 @@ if (uploadZone) {
         }
     }
     
-    // Función que abre el selector de archivos
     function triggerUpload() {
         fileInput.click();
     }
     
-    // Al hacer clic en la zona
     uploadZone.addEventListener('click', triggerUpload);
     
-    // Al seleccionar archivos
     fileInput.onchange = (e) => {
         uploadFiles(Array.from(e.target.files));
         fileInput.value = '';
     };
     
-    // Arrastrar y soltar
     uploadZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadZone.style.borderColor = 'var(--neon-blue)';
@@ -742,6 +736,7 @@ if (uploadZone) {
     });
     
     console.log('✅ Zona de transferencia activada');
+
 } else {
     console.log('❌ No se encontró la zona de transferencia');
 }

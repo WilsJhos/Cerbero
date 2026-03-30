@@ -376,12 +376,6 @@
                 </div>
                 <div class="upload-zone-cyber" id="uploadZone" style="cursor: pointer;">
     <div class="upload-content">
-        <div class="legal-notice" style="margin-top: 15px; font-size: 0.7rem; color: rgba(255,255,255,0.4); text-align: center;">
-    Al subir archivos, aceptas nuestros 
-    <a href="/terms/" style="color: var(--neon-blue);">Términos</a> y 
-    <a href="/privacy/" style="color: var(--neon-blue);">Política de Privacidad</a>. 
-    Cerbero no se responsabiliza por el uso indebido de los enlaces compartidos.
-
         <div class="upload-icon-cyber">📁</div>
         <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 15px;">ZONA DE TRANSFERENCIA</h4>
         <p style="color: rgba(255,255,255,0.5); margin-bottom: 25px;">Arrastra archivos aquí o haz clic para explorar</p>
@@ -395,7 +389,27 @@
                 <option value="720">30 días</option>
             </select>
         </div>
+        <div class="legal-notice" style="margin-top: 15px; font-size: 0.7rem; color: rgba(255,255,255,0.4); text-align: center;">
+            Al subir archivos, aceptas nuestros 
+            <a href="/terms/" style="color: var(--neon-blue);">Términos</a> y 
+            <a href="/privacy/" style="color: var(--neon-blue);">Política de Privacidad</a>. 
+            Cerbero no se responsabiliza por el uso indebido de los enlaces compartidos.
         </div>
+    </div>
+</div>
+        <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 15px;">ZONA DE TRANSFERENCIA</h4>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 25px;">Arrastra archivos aquí o haz clic para explorar</p>
+        <div id="uploadStatus" style="margin-top: 15px; color: var(--neon-green);"></div>
+        <div class="expiration-selector" style="margin: 20px 0;">
+            <label style="color: var(--neon-blue); font-family: monospace;">⏱️ EXPIRACIÓN:</label>
+            <select id="expirationSelect" style="background: var(--dark-3); border: 1px solid rgba(0,243,255,0.3); color: #fff; padding: 8px 12px; border-radius: 6px; margin-left: 10px;">
+                <option value="">Nunca expira</option>
+                <option value="24">24 horas</option>
+                <option value="168">7 días</option>
+                <option value="720">30 días</option>
+            </select>
+        </div>
+    
     </div>
 </div>
                 </div>
@@ -554,10 +568,22 @@
             } catch(e) { alert('Error'); }
         }
 
-        function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
-        function closeAuthModal() { document.getElementById('authModal').classList.remove('active'); }
-        function switchToRegister() { document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block'; document.getElementById('modalTitle').textContent = 'REGISTRO'; }
-        function switchToLogin() { document.getElementById('registerForm').style.display = 'none'; document.getElementById('loginForm').style.display = 'block'; document.getElementById('modalTitle').textContent = 'ACCESO'; }
+        function openAuthModal() { 
+            document.getElementById('authModal').classList.add('active'); 
+        }
+        function closeAuthModal() { 
+            document.getElementById('authModal').classList.remove('active'); 
+        }
+        function switchToRegister() { 
+            document.getElementById('loginForm').style.display = 'none'; 
+            document.getElementById('registerForm').style.display = 'block'; 
+            document.getElementById('modalTitle').textContent = 'REGISTRO'; 
+        }
+        function switchToLogin() { 
+            document.getElementById('registerForm').style.display = 'none'; 
+            document.getElementById('loginForm').style.display = 'block'; 
+            document.getElementById('modalTitle').textContent = 'ACCESO'; 
+        }
 
         const fileInput = document.createElement('input'); 
         fileInput.type = 'file'; 

@@ -198,7 +198,7 @@ SIMPLE_JWT = {
 }
 
 # Seguridad para producción
-CSRF_TRUSTED_ORIGINS = ['https://cerbero.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://tu-cerbero.onrender.com']
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True

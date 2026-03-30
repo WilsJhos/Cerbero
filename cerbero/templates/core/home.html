@@ -452,7 +452,8 @@
             const errorDiv = document.getElementById('loginError');
             try {
                 const res = await fetch('/api/auth/login/', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
                 const data = await res.json();
@@ -466,7 +467,7 @@
                     closeAuthModal();
                     loadUserProjects();
                 } else { errorDiv.textContent = data.error || 'Error'; }
-            } catch(e) { errorDiv.textContent = 'Error de conexión'; }
+            } catch(e) { errorDiv.textContent = 'Error de conexión'; + e.message; }
         }
 
         async function handleRegister() {
